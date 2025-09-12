@@ -5,7 +5,6 @@ import 'package:hush_sense/presentation/screens/capture_screen.dart';
 import '../../core/constants/app_constants.dart';
 import 'home_screen.dart';
 import 'map_screen.dart';
-import 'capture_screen.dart';
 import 'rewards_screen.dart';
 import 'profile_screen.dart';
 

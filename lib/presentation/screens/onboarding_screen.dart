@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/widgets/premium_button.dart';
+import '../../core/animations/waveform_animation.dart';
 import 'main_navigation_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -18,7 +20,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   late AnimationController _fadeController;
 
   final List<OnboardingPage> _pages = [
-    OnboardingPage(
+    const OnboardingPage(
       title: 'Welcome to HushSense',
       subtitle:
           'Join the world\'s largest decentralized noise mapping community',
@@ -28,7 +30,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       color: AppConstants.primaryColor,
       gradient: [AppConstants.primaryColor, AppConstants.primaryDarkColor],
     ),
-    OnboardingPage(
+    const OnboardingPage(
       title: 'Measure & Earn',
       subtitle: 'Turn your smartphone into a noise sensor',
       description:
@@ -37,7 +39,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       color: AppConstants.secondaryColor,
       gradient: [AppConstants.secondaryColor, AppConstants.successColor],
     ),
-    OnboardingPage(
+    const OnboardingPage(
       title: 'Discover Quiet Places',
       subtitle: 'Find the perfect spot for work or relaxation',
       description:
@@ -46,7 +48,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       color: AppConstants.accentColor,
       gradient: [AppConstants.accentColor, AppConstants.warningColor],
     ),
-    OnboardingPage(
+    const OnboardingPage(
       title: 'Your Privacy Matters',
       subtitle: 'Honest Data Approach',
       description:
@@ -202,12 +204,12 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         onPressed: _previousPage,
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppConstants.primaryColor,
-                          side: BorderSide(color: AppConstants.primaryColor),
+                          side: const BorderSide(color: AppConstants.primaryColor),
                           padding: const EdgeInsets.symmetric(
-                              vertical: AppConstants.paddingM),
+                              vertical: AppConstants.paddingL),
                           shape: RoundedRectangleBorder(
                             borderRadius:
-                                BorderRadius.circular(AppConstants.radiusL),
+                                BorderRadius.circular(AppConstants.radiusXL),
                           ),
                         ),
                         child: Text(
@@ -226,43 +228,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   Expanded(
                     flex: _currentPage > 0 ? 1 : 1,
                     child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: _pages[_currentPage].gradient,
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius:
-                            BorderRadius.circular(AppConstants.radiusL),
-                        boxShadow: [
-                          BoxShadow(
-                            color: _pages[_currentPage].color.withOpacity(0.3),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: ElevatedButton(
+                      child: PremiumButton(
+                        text: _currentPage == _pages.length - 1 ? 'Get Started' : 'Next',
                         onPressed: _nextPage,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: AppConstants.paddingM),
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(AppConstants.radiusL),
-                          ),
-                        ),
-                        child: Text(
-                          _currentPage == _pages.length - 1
-                              ? 'Get Started'
-                              : 'Next',
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                        style: PremiumButtonStyle.primary,
+                        isExpanded: true,
                       ),
                     ),
                   ),
@@ -332,7 +302,18 @@ class _OnboardingPageWidget extends StatelessWidget {
               .then()
               .shimmer(duration: const Duration(seconds: 2)),
 
-          const SizedBox(height: AppConstants.paddingXXL),
+          // Waveform animation above title
+          const SizedBox(height: 28),
+          WaveformAnimation(
+            isActive: isActive,
+            amplitude: 0.7,
+            color: page.color,
+            height: 28,
+            waveCount: 7,
+            duration: const Duration(milliseconds: 1600),
+          ).animate(target: isActive ? 1 : 0).fadeIn(duration: const Duration(milliseconds: 600)),
+
+          const SizedBox(height: AppConstants.paddingL),
 
           // Title
           Text(
@@ -363,6 +344,27 @@ class _OnboardingPageWidget extends StatelessWidget {
               .animate(target: isActive ? 1 : 0)
               .fadeIn(delay: const Duration(milliseconds: 400))
               .slideY(begin: 0.3, duration: const Duration(milliseconds: 400)),
+
+          // Sound reduction motif (horizontal fading gradient)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Container(
+              height: 6,
+              width: 80,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                gradient: LinearGradient(
+                  colors: [
+                    page.color.withOpacity(0.0),
+                    page.color.withOpacity(0.25),
+                    page.color.withOpacity(0.0),
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+            ),
+          ).animate(target: isActive ? 1 : 0).fadeIn(duration: const Duration(milliseconds: 700)),
 
           const SizedBox(height: AppConstants.paddingL),
 
