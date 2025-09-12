@@ -7,55 +7,59 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      // fontFamily: 'Inter', // Commented out until font files are added
+      fontFamily: 'Poppins', // Rounded sans-serif for premium feel
 
-      // Color Scheme
+      // HushSense Color Scheme - Inspired by Logo
       colorScheme: const ColorScheme.light(
-        primary: AppConstants.primaryColor,
-        onPrimary: Colors.white,
-        primaryContainer: Color(0xFFE0E7FF),
-        onPrimaryContainer: AppConstants.primaryDarkColor,
+        primary: AppConstants.primaryTeal,
+        onPrimary: AppConstants.pureWhite,
+        primaryContainer: AppConstants.mutedGreenBg,
+        onPrimaryContainer: AppConstants.deepBlue,
 
-        secondary: AppConstants.secondaryColor,
-        onSecondary: Colors.white,
-        secondaryContainer: Color(0xFFD1FAE5),
-        onSecondaryContainer: Color(0xFF065F46),
+        secondary: AppConstants.primaryTeal,
+        onSecondary: AppConstants.pureWhite,
+        secondaryContainer: AppConstants.mutedGreenBg,
+        onSecondaryContainer: AppConstants.deepBlue,
 
-        tertiary: AppConstants.accentColor,
-        onTertiary: Colors.white,
-        tertiaryContainer: Color(0xFFFEF3C7),
-        onTertiaryContainer: Color(0xFF92400E),
+        tertiary: AppConstants.deepBlue,
+        onTertiary: AppConstants.pureWhite,
+        tertiaryContainer: Color(0xFFE8F4FD),
+        onTertiaryContainer: AppConstants.deepBlue,
 
         error: AppConstants.errorColor,
-        onError: Colors.white,
+        onError: AppConstants.pureWhite,
         errorContainer: Color(0xFFFEE2E2),
         onErrorContainer: Color(0xFF991B1B),
-        surface: AppConstants.surfaceColor,
-        onSurface: AppConstants.textPrimary,
-
-        surfaceVariant: Color(0xFFF1F5F9),
+        
+        surface: AppConstants.pureWhite,
+        onSurface: AppConstants.deepBlue,
+        surfaceContainerHighest: AppConstants.mutedGreenBg,
         onSurfaceVariant: AppConstants.textSecondary,
-        outline: Color(0xFFCBD5E1),
+        
+        outline: AppConstants.softGray,
         outlineVariant: Color(0xFFE2E8F0),
-
+        
         shadow: Color(0x1A000000),
         scrim: Color(0x52000000),
-        inverseSurface: Color(0xFF1E293B),
-        onInverseSurface: Colors.white,
-        inversePrimary: Color(0xFFC7D2FE),
+        inverseSurface: AppConstants.deepBlue,
+        onInverseSurface: AppConstants.pureWhite,
+        inversePrimary: AppConstants.primaryTeal,
       ),
 
-      // App Bar Theme
+      // Background Color
+      scaffoldBackgroundColor: AppConstants.mutedGreenBg,
+
+      // App Bar Theme - HushSense Style
       appBarTheme: const AppBarTheme(
         elevation: 0,
-        scrolledUnderElevation: 1,
-        backgroundColor: AppConstants.surfaceColor,
-        foregroundColor: AppConstants.textPrimary,
+        scrolledUnderElevation: 0,
+        backgroundColor: AppConstants.mutedGreenBg,
+        foregroundColor: AppConstants.deepBlue,
         titleTextStyle: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: AppConstants.textPrimary,
-          fontFamily: 'Inter',
+          color: AppConstants.deepBlue,
+          fontFamily: 'Poppins',
         ),
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
@@ -64,50 +68,54 @@ class AppTheme {
         ),
       ),
 
-      // Card Theme
+      // Card Theme - Premium HushSense Style
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusL),
+          borderRadius: BorderRadius.circular(16),
         ),
-        color: AppConstants.surfaceColor,
-        shadowColor: AppConstants.textPrimary.withValues(alpha: 0.1),
+        color: AppConstants.pureWhite,
+        shadowColor: AppConstants.deepBlue.withOpacity(0.08),
       ),
 
-      // Elevated Button Theme
+      // Elevated Button Theme - Teal Primary
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: 0,
+          backgroundColor: AppConstants.primaryTeal,
+          foregroundColor: AppConstants.pureWhite,
           padding: const EdgeInsets.symmetric(
-            horizontal: AppConstants.paddingL,
-            vertical: AppConstants.paddingM,
+            horizontal: 24,
+            vertical: 16,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.radiusM),
+            borderRadius: BorderRadius.circular(24),
           ),
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Inter',
+            fontFamily: 'Poppins',
           ),
+          animationDuration: AppConstants.animationNormal,
         ),
       ),
 
-      // Outlined Button Theme
+      // Outlined Button Theme - Teal Border
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
+          foregroundColor: AppConstants.primaryTeal,
           padding: const EdgeInsets.symmetric(
-            horizontal: AppConstants.paddingL,
-            vertical: AppConstants.paddingM,
+            horizontal: 24,
+            vertical: 16,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.radiusM),
+            borderRadius: BorderRadius.circular(24),
           ),
-          side: const BorderSide(color: AppConstants.primaryColor),
+          side: const BorderSide(color: AppConstants.primaryTeal, width: 1.5),
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Inter',
+            fontFamily: 'Poppins',
           ),
         ),
       ),
@@ -321,18 +329,71 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      // fontFamily: 'Inter', // Commented out until font files are added
+      fontFamily: 'Poppins',
 
-      // Color Scheme for dark theme (simplified for now)
+      // HushSense Dark Mode Color Scheme
       colorScheme: const ColorScheme.dark(
-        primary: AppConstants.primaryColor,
-        onPrimary: Colors.white,
-        secondary: AppConstants.secondaryColor,
-        onSecondary: Colors.white,
-        background: Color(0xFF0F172A),
-        onBackground: Colors.white,
-        surface: Color(0xFF1E293B),
-        onSurface: Colors.white,
+        primary: AppConstants.primaryTeal,
+        onPrimary: AppConstants.pureWhite,
+        primaryContainer: AppConstants.darkSurface,
+        onPrimaryContainer: AppConstants.primaryTeal,
+
+        secondary: AppConstants.primaryTeal,
+        onSecondary: AppConstants.pureWhite,
+        secondaryContainer: AppConstants.darkSurface,
+        onSecondaryContainer: AppConstants.primaryTeal,
+
+        tertiary: AppConstants.mutedGreenBg,
+        onTertiary: AppConstants.deepBlue,
+        tertiaryContainer: AppConstants.darkSurface,
+        onTertiaryContainer: AppConstants.mutedGreenBg,
+
+        error: AppConstants.errorColor,
+        onError: AppConstants.pureWhite,
+        
+        surface: AppConstants.darkBackground,
+        onSurface: AppConstants.darkTextPrimary,
+        surfaceContainerHighest: AppConstants.darkSurface,
+        onSurfaceVariant: AppConstants.darkTextSecondary,
+        
+        outline: AppConstants.softGray,
+        outlineVariant: Color(0xFF374151),
+        
+        shadow: Color(0x40000000),
+        scrim: Color(0x80000000),
+        inverseSurface: AppConstants.pureWhite,
+        onInverseSurface: AppConstants.deepBlue,
+        inversePrimary: AppConstants.deepBlue,
+      ),
+
+      scaffoldBackgroundColor: AppConstants.darkBackground,
+
+      // Dark Mode App Bar
+      appBarTheme: const AppBarTheme(
+        elevation: 0,
+        backgroundColor: AppConstants.darkBackground,
+        foregroundColor: AppConstants.darkTextPrimary,
+        titleTextStyle: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: AppConstants.darkTextPrimary,
+          fontFamily: 'Poppins',
+        ),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        ),
+      ),
+
+      // Dark Mode Cards
+      cardTheme: CardThemeData(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        color: AppConstants.darkSurface,
+        shadowColor: Colors.black.withOpacity(0.3),
       ),
     );
   }

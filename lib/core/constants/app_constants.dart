@@ -7,28 +7,42 @@ class AppConstants {
   static const String appDescription =
       'The world\'s largest decentralized urban noise mapping platform';
 
-  // Colors
-  static const Color primaryColor = Color(0xFF97E340);
-  static const Color primaryDarkColor = Color.fromARGB(255, 163, 130, 38);
+  // HushSense Brand Colors - Inspired by Logo
+  static const Color primaryTeal = Color(0xFF3ABAB4);
+  static const Color deepBlue = Color(0xFF1C2A4D);
+  static const Color mutedGreenBg = Color(0xFFF6FAF9); // Softer off-white/gray for less eye fatigue
+  static const Color softGray = Color(0xFFB0BEC5);
+  static const Color pureWhite = Color(0xFFFFFFFF);
+  
+  // Legacy Colors (for backward compatibility)
+  static const Color primaryColor = primaryTeal;
+  static const Color primaryDarkColor = deepBlue;
   static const Color secondaryColor = Color(0xFF10B981);
-  static const Color accentColor = Color(0xFFF59E0B);
-  static const Color backgroundColor = Color(0xFFF8FAFC);
-  static const Color surfaceColor = Color(0xFFFFFFFF);
+  static const Color accentColor = primaryTeal;
+  static const Color backgroundColor = mutedGreenBg; // Use softened off-white
+  static const Color surfaceColor = Color(0xFFF9FBFC); // Slightly off-white for cards/containers
   static const Color errorColor = Color(0xFFEF4444);
   static const Color warningColor = Color(0xFFF97316);
   static const Color successColor = Color(0xFF22C55E);
 
-  // Text Colors
-  static const Color textPrimary = Color(0xFF1E293B);
+  // Text Colors - HushSense Theme
+  static const Color textPrimary = deepBlue;
   static const Color textSecondary = Color(0xFF64748B);
-  static const Color textTertiary = Color(0xFF94A3B8);
+  static const Color textTertiary = softGray;
+  static const Color textOnTeal = pureWhite;
 
-  // Noise Level Colors
-  static const Color noiseQuiet = Color(0xFF22C55E);
-  static const Color noiseModerate = Color(0xFFF59E0B);
+  // Noise Level Colors - HushSense Theme
+  static const Color noiseQuiet = primaryTeal;
+  static const Color noiseModerate = Color(0xFF3ABAB4);
   static const Color noiseLoud = Color(0xFFF97316);
   static const Color noiseVeryLoud = Color(0xFFEF4444);
   static const Color noiseExtreme = Color(0xFF7C2D12);
+
+  // Dark Mode Colors
+  static const Color darkBackground = Color(0xFF121A2F);
+  static const Color darkSurface = Color(0xFF1A2332);
+  static const Color darkTextPrimary = Color(0xFFCFD8DC);
+  static const Color darkTextSecondary = Color(0xFF94A3B8);
 
   // Dimensions
   static const double paddingXS = 4.0;
@@ -48,10 +62,17 @@ class AppConstants {
   static const double iconSizeL = 32.0;
   static const double iconSizeXL = 48.0;
 
-  // Animation Durations
+  // Animation Durations - Premium Feel
   static const Duration animationFast = Duration(milliseconds: 200);
   static const Duration animationNormal = Duration(milliseconds: 300);
   static const Duration animationSlow = Duration(milliseconds: 500);
+  static const Duration animationGentle = Duration(milliseconds: 800);
+  static const Duration waveformPulse = Duration(milliseconds: 1500);
+  
+  // Animation Curves - Smooth & Premium
+  static const Curve easeInOutCubic = Curves.easeInOutCubic;
+  static const Curve gentleSpring = Curves.elasticOut;
+  static const Curve smoothFade = Curves.easeInOutQuart;
 
   // Noise Measurement Constants
   static const double minDecibelLevel = 30.0;

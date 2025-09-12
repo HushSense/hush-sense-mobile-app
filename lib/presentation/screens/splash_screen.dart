@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/animations/waveform_animation.dart';
 import 'onboarding_screen.dart';
 import 'dart:async'; // Added for Timer
 
@@ -93,7 +94,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -152,15 +153,10 @@ class _SplashScreenState extends State<SplashScreen>
             const SizedBox(height: 60),
 
             // Loading Indicator
-            Container(
+            SizedBox(
               width: 40,
               height: 40,
-              child: CircularProgressIndicator(
-                strokeWidth: 3,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).colorScheme.primary,
-                ),
-              ),
+              child: WaveformAnimation(isActive: true, amplitude: 0.7, color: AppConstants.primaryTeal, height: 24, waveCount: 7, duration: Duration(milliseconds: 1200),),
             )
                 .animate(controller: _pulseController)
                 .scale(
