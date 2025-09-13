@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:ui' show FontVariation;
 import '../constants/app_constants.dart';
 
 class AppTheme {
@@ -7,7 +8,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      fontFamily: 'Poppins', // Rounded sans-serif for premium feel
+      fontFamily: 'Funnel Sans', // Global app font (variable)
 
       // HushSense Color Scheme - Inspired by Logo
       colorScheme: const ColorScheme.light(
@@ -59,7 +60,8 @@ class AppTheme {
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: AppConstants.deepBlue,
-          fontFamily: 'Poppins',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 600)],
         ),
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
@@ -94,7 +96,8 @@ class AppTheme {
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Poppins',
+            fontFamily: 'Funnel Sans',
+            fontVariations: [FontVariation('wght', 560)],
           ),
           animationDuration: AppConstants.animationNormal,
         ),
@@ -115,7 +118,8 @@ class AppTheme {
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Poppins',
+            fontFamily: 'Funnel Sans',
+            fontVariations: [FontVariation('wght', 560)],
           ),
         ),
       ),
@@ -133,7 +137,8 @@ class AppTheme {
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Inter',
+            fontFamily: 'Funnel Sans',
+            fontVariations: [FontVariation('wght', 520)],
           ),
         ),
       ),
@@ -175,7 +180,8 @@ class AppTheme {
         hintStyle: const TextStyle(
           color: AppConstants.textTertiary,
           fontSize: 16,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 430)],
         ),
       ),
 
@@ -189,12 +195,14 @@ class AppTheme {
         selectedLabelStyle: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 560)],
         ),
         unselectedLabelStyle: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w500,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 480)],
         ),
       ),
 
@@ -214,7 +222,8 @@ class AppTheme {
         labelStyle: const TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w500,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 500)],
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusL),
@@ -235,91 +244,106 @@ class AppTheme {
           fontSize: 57,
           fontWeight: FontWeight.w400,
           color: AppConstants.textPrimary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 420)],
         ),
         displayMedium: TextStyle(
           fontSize: 45,
           fontWeight: FontWeight.w400,
           color: AppConstants.textPrimary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 420)],
         ),
         displaySmall: TextStyle(
           fontSize: 36,
           fontWeight: FontWeight.w400,
           color: AppConstants.textPrimary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 420)],
         ),
         headlineLarge: TextStyle(
           fontSize: 32,
           fontWeight: FontWeight.w600,
           color: AppConstants.textPrimary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 680)],
         ),
         headlineMedium: TextStyle(
           fontSize: 28,
           fontWeight: FontWeight.w600,
           color: AppConstants.textPrimary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 660)],
         ),
         headlineSmall: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.w600,
           color: AppConstants.textPrimary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 640)],
         ),
         titleLarge: TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.w600,
           color: AppConstants.textPrimary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 600)],
         ),
         titleMedium: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: AppConstants.textPrimary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 560)],
         ),
         titleSmall: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
           color: AppConstants.textPrimary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 540)],
         ),
         bodyLarge: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w400,
           color: AppConstants.textPrimary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 450)],
         ),
         bodyMedium: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w400,
           color: AppConstants.textPrimary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 440)],
         ),
         bodySmall: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w400,
           color: AppConstants.textSecondary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 430)],
         ),
         labelLarge: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
           color: AppConstants.textPrimary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 560)],
         ),
         labelMedium: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
           color: AppConstants.textPrimary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 540)],
         ),
         labelSmall: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.w600,
           color: AppConstants.textSecondary,
-          fontFamily: 'Inter',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 520)],
         ),
       ),
     );
@@ -329,7 +353,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      fontFamily: 'Poppins',
+      fontFamily: 'Funnel Sans',
 
       // HushSense Dark Mode Color Scheme
       colorScheme: const ColorScheme.dark(
@@ -377,7 +401,8 @@ class AppTheme {
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: AppConstants.darkTextPrimary,
-          fontFamily: 'Poppins',
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 600)],
         ),
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
