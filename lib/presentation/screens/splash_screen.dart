@@ -93,8 +93,9 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -104,13 +105,13 @@ class _SplashScreenState extends State<SplashScreen>
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
+                color: theme.colorScheme.primary,
                 borderRadius: BorderRadius.circular(60),
               ),
               child: Icon(
                 Icons.volume_up,
                 size: 60,
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: theme.colorScheme.onPrimary,
               ),
             )
                 .animate(controller: _logoController)
@@ -127,10 +128,10 @@ class _SplashScreenState extends State<SplashScreen>
             // App Name Animation
             Text(
               AppConstants.appName,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+              style: theme.textTheme.headlineLarge?.copyWith(
+                color: theme.colorScheme.onSurface,
+                letterSpacing: -0.5,
+              ),
             )
                 .animate(controller: _textController)
                 .fadeIn(duration: const Duration(milliseconds: 800))

@@ -107,8 +107,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppConstants.backgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppConstants.paddingL),
@@ -146,6 +147,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }
 
   Widget _buildProfileHeader() {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(AppConstants.paddingL),
       decoration: BoxDecoration(
@@ -228,23 +230,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           const SizedBox(height: AppConstants.paddingM),
           
           // Name and Username
-          const Text(
+          Text(
             'Sound Scout',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppConstants.textPrimary,
-              fontFamily: 'Funnel Sans',
-            ),
+            style: theme.textTheme.headlineSmall,
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             '@soundscout_2024',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: AppConstants.textSecondary,
-              fontFamily: 'Funnel Sans',
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: AppConstants.paddingM),
@@ -290,17 +284,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }
 
   Widget _buildQuickStats() {
-    return const Column(
+    final theme = Theme.of(context);
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Your Impact',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppConstants.textPrimary,
-            fontFamily: 'Funnel Sans',
-          ),
+          style: theme.textTheme.titleMedium,
         ),
         SizedBox(height: AppConstants.paddingM),
         Row(
@@ -434,25 +424,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }
 
   Widget _buildSection(String title, List<Widget> items) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppConstants.textPrimary,
-            fontFamily: 'Funnel Sans',
-          ),
+          style: theme.textTheme.titleMedium,
         ),
         const SizedBox(height: AppConstants.paddingM),
         Container(
           decoration: BoxDecoration(
-            color: AppConstants.cardBackground,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: AppConstants.borderColor,
+              color: theme.colorScheme.outline,
               width: 1,
             ),
           ),
@@ -464,9 +450,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 children: [
                   item,
                   if (index < items.length - 1)
-                    const Divider(
+                    Divider(
                       height: 1,
-                      color: AppConstants.borderColor,
+                      color: theme.colorScheme.outline,
                       indent: 56,
                     ),
                 ],
@@ -514,14 +500,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }
 
   void _showAvatarPicker(BuildContext context) {
+    final theme = Theme.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         padding: const EdgeInsets.all(AppConstants.paddingL),
-        decoration: const BoxDecoration(
-          color: AppConstants.cardBackground,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        decoration: BoxDecoration(
+          color: theme.cardColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -530,19 +517,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: AppConstants.borderColor,
+                color: theme.colorScheme.outline,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             const SizedBox(height: AppConstants.paddingL),
-            const Text(
+            Text(
               'Change Profile Picture',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: AppConstants.textPrimary,
-                fontFamily: 'Funnel Sans',
-              ),
+              style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: AppConstants.paddingL),
             Row(
@@ -570,6 +552,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }
 
   Widget _buildAvatarOption(IconData icon, String label, VoidCallback onTap) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -590,12 +573,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           const SizedBox(height: 8),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppConstants.textPrimary,
-              fontFamily: 'Funnel Sans',
-            ),
+            style: theme.textTheme.labelLarge,
           ),
         ],
       ),
@@ -603,36 +581,31 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }
 
   void _showSignOutDialog(BuildContext context) {
+    final theme = Theme.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppConstants.cardBackground,
+        backgroundColor: theme.cardColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        title: const Text(
+        title: Text(
           'Sign Out',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppConstants.textPrimary,
-            fontFamily: 'Funnel Sans',
-          ),
+          style: theme.textTheme.titleLarge,
         ),
-        content: const Text(
+        content: Text(
           'Are you sure you want to sign out of your account?',
-          style: TextStyle(
-            color: AppConstants.textSecondary,
-            fontFamily: 'Funnel Sans',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
+            child: Text(
               'Cancel',
-              style: TextStyle(
-                color: AppConstants.textSecondary,
-                fontFamily: 'Funnel Sans',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
           ),
