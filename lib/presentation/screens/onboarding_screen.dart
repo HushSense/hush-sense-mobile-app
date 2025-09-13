@@ -83,7 +83,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       });
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOutCubic,
+        curve: AppConstants.easeInOutCubic,
       );
     } else {
       _completeOnboarding();
@@ -97,7 +97,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       });
       _pageController.previousPage(
         duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOutCubic,
+        curve: AppConstants.easeInOutCubic,
       );
     }
   }
@@ -146,6 +146,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     'Skip',
                     style: theme.textTheme.labelLarge?.copyWith(
                       fontWeight: FontWeight.w600,
+                      color: AppConstants.textPrimary,
                     ),
                   ),
                 ),
@@ -206,7 +207,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           foregroundColor: AppConstants.primaryColor,
                           side: const BorderSide(color: AppConstants.primaryColor),
                           padding: const EdgeInsets.symmetric(
-                              vertical: AppConstants.paddingL),
+                              vertical: AppConstants.paddingM),
                           shape: RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.circular(AppConstants.radiusXL),
@@ -216,6 +217,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           'Previous',
                           style: theme.textTheme.labelLarge?.copyWith(
                             fontWeight: FontWeight.w600,
+                            color: AppConstants.textPrimary,
                           ),
                         ),
                       ),
@@ -263,8 +265,10 @@ class _OnboardingPageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(AppConstants.paddingXL),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Icon with gradient background
           Container(
@@ -297,7 +301,7 @@ class _OnboardingPageWidget extends StatelessWidget {
               .animate(target: isActive ? 1 : 0)
               .scale(
                 duration: const Duration(milliseconds: 400),
-                curve: Curves.elasticOut,
+                curve: AppConstants.gentleSpring,
               )
               .then()
               .shimmer(duration: const Duration(seconds: 2)),
@@ -382,8 +386,10 @@ class _OnboardingPageWidget extends StatelessWidget {
               .fadeIn(delay: const Duration(milliseconds: 600))
               .slideY(begin: 0.3, duration: const Duration(milliseconds: 400)),
         ],
-      ),
-    );
+            ),
+          ),
+        ),
+      );
   }
 }
 

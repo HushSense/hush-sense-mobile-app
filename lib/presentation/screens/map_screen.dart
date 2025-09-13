@@ -90,29 +90,33 @@ class _MapScreenState extends ConsumerState<MapScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppConstants.backgroundColor,
       body: Stack(
         children: [
           // Google Map
-          GoogleMap(
-            initialCameraPosition: _initialPosition,
-            onMapCreated: (GoogleMapController controller) {
-              _mapController = controller;
-            },
-            markers: _createMarkers(),
-            mapType: MapType.normal,
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            zoomControlsEnabled: false,
-            mapToolbarEnabled: false,
-            compassEnabled: false,
-            style: '''[
-              {
-                "featureType": "poi",
-                "elementType": "labels",
-                "stylers": [{"visibility": "off"}]
-              }
-            ]''',
+          SizedBox(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: GoogleMap(
+              initialCameraPosition: _initialPosition,
+              onMapCreated: (GoogleMapController controller) {
+                _mapController = controller;
+              },
+              markers: _createMarkers(),
+              mapType: MapType.normal,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              zoomControlsEnabled: false,
+              mapToolbarEnabled: false,
+              compassEnabled: false,
+              style: '''[
+                {
+                  "featureType": "poi",
+                  "elementType": "labels",
+                  "stylers": [{"visibility": "off"}]
+                }
+              ]''',
+            ),
           ),
 
           // Top UI Controls
