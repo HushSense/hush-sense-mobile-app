@@ -5,11 +5,80 @@ import '../../core/constants/app_constants.dart';
 import '../widgets/stats_card.dart';
 import '../widgets/quick_action_card.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late List<Animation<double>> _fadeAnimations;
+  late List<Animation<Offset>> _slideAnimations;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+
+    // Create staggered animations for each section
+    _fadeAnimations = List.generate(6, (index) {
+      return Tween<double>(
+        begin: 0.0,
+        end: 1.0,
+      ).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(
+          index * 0.1,
+          0.6 + (index * 0.1),
+          curve: Curves.easeOutCubic,
+        ),
+      ));
+    });
+
+    _slideAnimations = List.generate(6, (index) {
+      return Tween<Offset>(
+        begin: const Offset(0, 0.3),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(
+          index * 0.1,
+          0.6 + (index * 0.1),
+          curve: Curves.easeOutCubic,
+        ),
+      ));
+    });
+
+    // Start animation after a brief delay
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) _animationController.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildAnimatedSection(int index, Widget child) {
+    return SlideTransition(
+      position: _slideAnimations[index],
+      child: FadeTransition(
+        opacity: _fadeAnimations[index],
+        child: child,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppConstants.backgroundColor,
       body: SafeArea(
@@ -19,19 +88,19 @@ class HomeScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header Section
-              _buildHeader(context),
+              _buildAnimatedSection(0, _buildHeader(context)),
               const SizedBox(height: AppConstants.paddingXL),
               
               // Stats Overview
-              _buildStatsSection(),
+              _buildAnimatedSection(1, _buildStatsSection()),
               const SizedBox(height: AppConstants.paddingXL),
               
               // Quick Actions
-              _buildQuickActions(),
+              _buildAnimatedSection(2, _buildQuickActions()),
               const SizedBox(height: AppConstants.paddingXL),
               
               // Recent Activity
-              _buildRecentActivity(context),
+              _buildAnimatedSection(3, _buildRecentActivity(context)),
               const SizedBox(height: AppConstants.paddingL),
             ],
           ),
@@ -41,58 +110,125 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Good morning',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppConstants.textSecondary,
-                      fontFamily: 'Funnel Sans',
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Sound Scout',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppConstants.textPrimary,
-                      fontFamily: 'Funnel Sans',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: AppConstants.primaryTeal.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(
-                Icons.person,
-                color: AppConstants.primaryTeal,
-                size: 24,
-              ),
-            ),
+    return Container(
+      padding: const EdgeInsets.all(AppConstants.paddingL),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppConstants.primaryTeal.withValues(alpha: 0.05),
+            AppConstants.primaryColor.withValues(alpha: 0.03),
           ],
         ),
-        const SizedBox(height: AppConstants.paddingM),
-        Text(
-          'Ready to map the sound of your city?',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppConstants.textSecondary,
-            fontFamily: 'Funnel Sans',
-          ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: AppConstants.primaryTeal.withValues(alpha: 0.1),
+          width: 1,
         ),
-      ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Good morning',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: AppConstants.textSecondary,
+                        fontFamily: 'Funnel Sans',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    ShaderMask(
+                      shaderCallback: (bounds) => LinearGradient(
+                        colors: [
+                          AppConstants.primaryTeal,
+                          AppConstants.primaryColor,
+                        ],
+                      ).createShader(bounds),
+                      child: Text(
+                        'Sound Scout',
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontFamily: 'Funnel Sans',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppConstants.primaryTeal,
+                      AppConstants.primaryColor,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppConstants.primaryTeal.withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.person,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppConstants.paddingM),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+            decoration: BoxDecoration(
+              color: AppConstants.accentGold.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppConstants.accentGold.withValues(alpha: 0.2),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.location_on,
+                  color: AppConstants.accentGold,
+                  size: 16,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  'Ready to map the sound of your city?',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppConstants.accentGold,
+                    fontFamily: 'Funnel Sans',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
