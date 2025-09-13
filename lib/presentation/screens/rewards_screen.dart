@@ -2,13 +2,102 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
-import '../../core/utils/haptic_feedback.dart';
 
-class RewardsScreen extends ConsumerWidget {
+class RewardsScreen extends ConsumerStatefulWidget {
   const RewardsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RewardsScreen> createState() => _RewardsScreenState();
+}
+
+class _RewardsScreenState extends ConsumerState<RewardsScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late List<Animation<double>> _fadeAnimations;
+  late List<Animation<Offset>> _slideAnimations;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1400),
+      vsync: this,
+    );
+
+    // Create staggered animations for each section
+    _fadeAnimations = List.generate(8, (index) {
+      return Tween<double>(
+        begin: 0.0,
+        end: 1.0,
+      ).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(
+          index * 0.08,
+          0.5 + (index * 0.08),
+          curve: Curves.easeOutCubic,
+        ),
+      ));
+    });
+
+    _slideAnimations = List.generate(8, (index) {
+      return Tween<Offset>(
+        begin: const Offset(0, 0.4),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(
+          index * 0.08,
+          0.5 + (index * 0.08),
+          curve: Curves.easeOutCubic,
+        ),
+      ));
+    });
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: const Interval(0.0, 0.4, curve: Curves.easeOutBack),
+    ));
+
+    // Start animation after a brief delay
+    Future.delayed(const Duration(milliseconds: 150), () {
+      if (mounted) _animationController.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildAnimatedSection(int index, Widget child, {bool useScale = false}) {
+    if (useScale) {
+      return ScaleTransition(
+        scale: _scaleAnimation,
+        child: SlideTransition(
+          position: _slideAnimations[index],
+          child: FadeTransition(
+            opacity: _fadeAnimations[index],
+            child: child,
+          ),
+        ),
+      );
+    }
+    return SlideTransition(
+      position: _slideAnimations[index],
+      child: FadeTransition(
+        opacity: _fadeAnimations[index],
+        child: child,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppConstants.backgroundColor,
       body: SafeArea(
@@ -18,27 +107,27 @@ class RewardsScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header Section
-              _buildHeader(context),
-              const SizedBox(height: AppConstants.paddingXL),
-              
+              _buildAnimatedSection(0, _buildHeader(context)),
+              const SizedBox(height: AppConstants.paddingL),
+
               // Wallet Balance Card
-              _buildWalletCard(),
-              const SizedBox(height: AppConstants.paddingXL),
-              
+              _buildAnimatedSection(1, _buildWalletCard(), useScale: true),
+              const SizedBox(height: AppConstants.paddingL),
+
               // Earning Stats
-              _buildEarningStats(),
-              const SizedBox(height: AppConstants.paddingXL),
-              
+              _buildAnimatedSection(2, _buildEarningStats()),
+              const SizedBox(height: AppConstants.paddingL),
+
               // Achievement Badges
-              _buildAchievements(context),
-              const SizedBox(height: AppConstants.paddingXL),
-              
+              _buildAnimatedSection(3, _buildAchievements(context)),
+              const SizedBox(height: AppConstants.paddingL),
+
               // Leaderboard Preview
-              _buildLeaderboard(context),
-              const SizedBox(height: AppConstants.paddingXL),
-              
+              _buildAnimatedSection(4, _buildLeaderboard(context)),
+              const SizedBox(height: AppConstants.paddingL),
+
               // Redemption Options
-              _buildRedemptionOptions(),
+              _buildAnimatedSection(5, _buildRedemptionOptions()),
               const SizedBox(height: AppConstants.paddingL),
             ],
           ),
@@ -79,95 +168,191 @@ class RewardsScreen extends ConsumerWidget {
       padding: const EdgeInsets.all(AppConstants.paddingL),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            AppConstants.primaryTeal,
-            AppConstants.primaryTeal.withValues(alpha: 0.8),
-          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
+          colors: [
+            AppConstants.primaryTeal,
+            AppConstants.primaryColor,
+            AppConstants.primaryTeal.withValues(alpha: 0.8),
+          ],
+          stops: const [0.0, 0.6, 1.0],
         ),
-        borderRadius: BorderRadius.circular(AppConstants.radiusL),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppConstants.primaryTeal.withValues(alpha: 0.3),
+            color: AppConstants.primaryTeal.withValues(alpha: 0.4),
             blurRadius: 20,
-            offset: const Offset(0, 8),
+            offset: const Offset(0, 10),
+            spreadRadius: 2,
+          ),
+          BoxShadow(
+            color: AppConstants.primaryColor.withValues(alpha: 0.2),
+            blurRadius: 40,
+            offset: const Offset(0, 20),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.account_balance_wallet,
-                color: AppConstants.surfaceColor,
-                size: 24,
+          // Background pattern
+          Positioned(
+            top: -20,
+            right: -20,
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.05),
               ),
-              const SizedBox(width: 8),
+            ),
+          ),
+          Positioned(
+            bottom: -30,
+            left: -30,
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.03),
+              ),
+            ),
+          ),
+          // Main content
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'HUSH Wallet',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          fontFamily: 'Funnel Sans',
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Decentralized Rewards',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.7),
+                          fontFamily: 'Funnel Sans',
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: AppConstants.accentGold.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppConstants.accentGold.withValues(alpha: 0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: AppConstants.accentGold,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppConstants.accentGold.withValues(alpha: 0.6),
+                                blurRadius: 4,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Connected',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            fontFamily: 'Funnel Sans',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppConstants.paddingL),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '2,847',
+                    style: TextStyle(
+                      fontSize: 42,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      fontFamily: 'Funnel Sans',
+                      height: 1.0,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppConstants.accentGold.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '+12%',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: AppConstants.accentGold,
+                          fontFamily: 'Funnel Sans',
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               Text(
-                'HUSH Wallet',
+                '\$HUSH Tokens',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: AppConstants.surfaceColor.withValues(alpha: 0.9),
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white.withValues(alpha: 0.9),
                   fontFamily: 'Funnel Sans',
                 ),
               ),
-              const Spacer(),
+              const SizedBox(height: AppConstants.paddingM),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppConstants.surfaceColor.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'Connected',
+                  '≈ \$142.35 USD • 24h: +\$16.80',
                   style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: AppConstants.surfaceColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white.withValues(alpha: 0.8),
                     fontFamily: 'Funnel Sans',
                   ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppConstants.paddingL),
-          Text(
-            '2,847',
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              color: AppConstants.surfaceColor,
-              fontFamily: 'Funnel Sans',
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '\$HUSH Tokens',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppConstants.surfaceColor.withValues(alpha: 0.8),
-              fontFamily: 'Funnel Sans',
-            ),
-          ),
-          const SizedBox(height: AppConstants.paddingM),
-          Row(
-            children: [
-              Icon(
-                Icons.trending_up,
-                color: AppConstants.surfaceColor.withValues(alpha: 0.8),
-                size: 16,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '+127 this week',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppConstants.surfaceColor.withValues(alpha: 0.8),
-                  fontFamily: 'Funnel Sans',
                 ),
               ),
             ],
@@ -632,7 +817,7 @@ class RewardsScreen extends ConsumerWidget {
               const SizedBox(height: 4),
               GestureDetector(
                 onTap: () {
-                  HushHaptics.lightTap();
+                  // HushHaptics.lightTap(); // TODO: Add haptic feedback
                   // TODO: Handle redemption
                 },
                 child: Container(
