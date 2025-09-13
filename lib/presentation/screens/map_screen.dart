@@ -139,6 +139,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                       color: AppConstants.primaryColor,
                       borderRadius: BorderRadius.circular(AppConstants.radiusL),
                     ),
+                    indicatorPadding: const EdgeInsets.all(AppConstants.paddingS - 3),
                     indicatorSize: TabBarIndicatorSize.tab,
                     dividerColor: Colors.transparent,
                     labelColor: Colors.white,
