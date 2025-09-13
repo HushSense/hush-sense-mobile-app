@@ -10,6 +10,8 @@ class WaveformAnimation extends StatefulWidget {
   final double height;
   final int waveCount;
   final Duration duration;
+  final double barWidth;
+  final double spacing;
 
   const WaveformAnimation({
     super.key,
@@ -19,6 +21,8 @@ class WaveformAnimation extends StatefulWidget {
     this.height = 60,
     this.waveCount = 5,
     this.duration = AppConstants.waveformPulse,
+    this.barWidth = 4,
+    this.spacing = 2,
   });
 
   @override
@@ -97,31 +101,59 @@ class _WaveformAnimationState extends State<WaveformAnimation>
   Widget build(BuildContext context) {
     return SizedBox(
       height: widget.height,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: List.generate(widget.waveCount, (index) {
-          return AnimatedBuilder(
-            animation: _waveControllers[index],
-            builder: (context, child) {
-              final progress = _waveControllers[index].value;
-              double rawHeight = widget.height * (0.2 + 0.8 * widget.amplitude * math.sin(progress * 2 * math.pi));
-              final height = rawHeight.clamp(6.0, widget.height);
-              
-              return Container(
-                width: 4,
-                height: height,
-                margin: const EdgeInsets.symmetric(horizontal: 2),
-                decoration: BoxDecoration(
-                  color: widget.color.withOpacity(
-                    widget.isActive ? 0.8 : 0.3,
-                  ),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              );
-            },
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Compute dynamic bar width/spacing to fit within maxWidth
+          final maxW = constraints.maxWidth.isFinite ? constraints.maxWidth : double.infinity;
+          double barW = widget.barWidth;
+          double space = widget.spacing;
+
+          if (maxW.isFinite) {
+            // Each bar has horizontal margin on both sides, so account for all margins
+            final n = widget.waveCount.toDouble();
+            final totalNeeded = n * barW + n * (space * 2);
+            if (totalNeeded > maxW) {
+              // subtract a tiny epsilon to avoid rounding overflow
+              final scale = (maxW - 0.5) / totalNeeded;
+              barW = (barW * scale).clamp(1.0, barW);
+              space = (space * scale).clamp(0.0, space);
+            }
+          }
+
+          return ClipRect(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: List.generate(widget.waveCount, (index) {
+                  return AnimatedBuilder(
+                    animation: _waveControllers[index],
+                    builder: (context, child) {
+                      final progress = _waveControllers[index].value;
+                      double rawHeight = widget.height * (0.2 + 0.8 * widget.amplitude * math.sin(progress * 2 * math.pi));
+                      final height = rawHeight.clamp(6.0, widget.height);
+
+                      return Container(
+                        width: barW,
+                        height: height,
+                        margin: EdgeInsets.symmetric(horizontal: space),
+                        decoration: BoxDecoration(
+                          color: widget.color.withOpacity(
+                            widget.isActive ? 0.8 : 0.3,
+                          ),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      );
+                    },
+                  );
+                }),
+              ),
+            ),
           );
-        }),
+        },
       ),
     );
   }
