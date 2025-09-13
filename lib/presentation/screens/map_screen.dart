@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../core/constants/app_constants.dart';
 
@@ -16,6 +18,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
   GoogleMapController? _mapController;
+  LatLng? _userLatLng;
+  Marker? _userMarker;
   
   static const CameraPosition _initialPosition = CameraPosition(
     target: LatLng(40.7589, -73.9851), // NYC
@@ -78,6 +82,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _initLocation();
   }
 
   @override
@@ -85,6 +90,100 @@ class _MapScreenState extends ConsumerState<MapScreen>
     _tabController.dispose();
     _searchController.dispose();
     super.dispose();
+  }
+
+  Future<void> _initLocation() async {
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        // Services disabled; we won't block, but we won't show a user marker
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.deniedForever ||
+          permission == LocationPermission.denied) {
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      if (!mounted) return;
+
+      final userLatLng = LatLng(position.latitude, position.longitude);
+      final userMarker = Marker(
+        markerId: const MarkerId('user'),
+        position: userLatLng,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        infoWindow: const InfoWindow(title: 'You are here'),
+      );
+
+      setState(() {
+        _userLatLng = userLatLng;
+        _userMarker = userMarker;
+      });
+
+      // Animate camera to user's current location
+      await _mapController?.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: userLatLng, zoom: 15.0),
+        ),
+      );
+
+      // Generate demo points around the user's current location with a wide perimeter
+      _generateDemoPoints(userLatLng);
+    } catch (e) {
+      // Swallow errors silently for now; can add logging/snackbar if desired
+    }
+  }
+
+  void _generateDemoPoints(LatLng center) {
+    // Clear existing demo points and repopulate around the user's location
+    _measurementPoints.clear();
+
+    // Generate points on a wide ring around the user (roughly 1–4 km)
+    // 1 degree latitude ~ 111 km; 0.01 deg ~ 1.11 km
+    final random = math.Random();
+    final venueTypes = ['Library', 'Cafe', 'Restaurant', 'Retail', 'Park'];
+    final venueNames = [
+      'Quiet Nook', 'City Library', 'Corner Cafe', 'Urban Eatery', 'Central Park',
+      'Riverside Cafe', 'Downtown Hub', 'Book Haven', 'Silent Study', 'Green Plaza',
+      'Zen Lounge', 'Serenity Spot', 'Market Square', 'Harbor View', 'Skyline Bar'
+    ];
+
+    // Create 24 points distributed around the user
+    const int count = 24;
+    for (int i = 0; i < count; i++) {
+      final angle = (2 * math.pi / count) * i + random.nextDouble() * 0.2; // slight jitter
+      final radiusDeg = 0.001 + random.nextDouble() * 0.03; // 0.01 - 0.04 degrees (~1.1 - 4.4 km)
+
+      // Adjust lon by cos(latitude) factor for more accurate spacing
+      final latOffset = radiusDeg * math.sin(angle);
+      final lonOffset = (radiusDeg * math.cos(angle)) / math.cos(center.latitude * math.pi / 180);
+
+      final lat = center.latitude + latOffset;
+      final lon = center.longitude + lonOffset;
+
+      final db = 30 + random.nextInt(50); // 30 - 79 dB
+      final vt = venueTypes[random.nextInt(venueTypes.length)];
+      final vn = venueNames[random.nextInt(venueNames.length)];
+
+      _measurementPoints.add(MeasurementPoint(
+        id: 'demo_${i + 1}',
+        latitude: lat,
+        longitude: lon,
+        decibelLevel: db.toDouble(),
+        venueName: vn,
+        venueType: vt,
+      ));
+    }
+
+    if (mounted) setState(() {});
   }
 
   @override
@@ -103,7 +202,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
               onMapCreated: (GoogleMapController controller) {
                 _mapController = controller;
               },
-              markers: _createMarkers(),
+              markers: _getAllMarkers(),
               mapType: MapType.normal,
               myLocationEnabled: true,
               myLocationButtonEnabled: false,
@@ -301,6 +400,14 @@ class _MapScreenState extends ConsumerState<MapScreen>
         ),
       );
     }).toSet();
+  }
+
+  Set<Marker> _getAllMarkers() {
+    var markers = _createMarkers();
+    if (_userMarker != null) {
+      markers = {...markers, _userMarker!};
+    }
+    return markers;
   }
 
   double _getMarkerHue(double decibelLevel) {

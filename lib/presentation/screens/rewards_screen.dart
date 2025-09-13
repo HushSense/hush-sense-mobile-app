@@ -300,7 +300,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: AppConstants.accentGold.withValues(alpha: 0.2),
+                        color: AppConstants.accentGold.withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(

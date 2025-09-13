@@ -151,5 +151,40 @@ This document tracks all UI components and screens built for HushSense to preven
 4. **Animation Triggers**: Connect animations to real data streams
 5. **Loading States**: Add proper loading indicators to existing components
 
+## Recent Updates (2025-09-13)
+
+### Theming System
+- **Light/Dark Mode**
+  - Implemented theme switching with `themeModeProvider`
+  - Default theme set to Light mode
+  - All UI components now respect theme colors via `Theme.of(context)`
+  - Color scheme uses Material 3 theming with custom accent colors
+
+### Map Screen
+- **Current Location**
+  - Added geolocation with permission handling
+  - Blue dot shows user's current location
+  - Map centers on user's location on initial load
+  - Custom "You are here" marker with azure color
+
+- **Dynamic Markers**
+  - Demo points now generate in a wide perimeter around user's location
+  - 24 points distributed in a 100m-3.3km radius
+  - Random venue types and names for variety
+  - Markers color-coded by noise level (green → yellow → orange → red)
+
+- **UI Improvements**
+  - Clean tab bar interface for map/list views
+  - Search functionality (UI only - needs backend integration)
+  - Animated transitions between map states
+
+### Rewards Screen
+- **Visual Refresh**
+  - Removed all hardcoded colors
+  - Implemented theme-adaptive UI
+  - Gradient cards with proper elevation
+  - Improved typography hierarchy
+
 ## Last Updated
+2025-09-13 - Added theming, map features, and UI updates
 2025-01-13 - Initial documentation creation
