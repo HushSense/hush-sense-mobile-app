@@ -38,6 +38,10 @@ class AppConstants {
   static const Color noiseVeryLoud = Color(0xFFEF4444);
   static const Color noiseExtreme = Color(0xFF7C2D12);
 
+  // Additional Accent Colors
+  static const Color accentGold = Color(0xFFF59E0B);
+  static const Color accentOrange = Color(0xFFF97316);
+
   // Dark Mode Colors
   static const Color darkBackground = Color(0xFF121A2F);
   static const Color darkSurface = Color(0xFF1A2332);
