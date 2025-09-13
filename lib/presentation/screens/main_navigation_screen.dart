@@ -100,7 +100,7 @@ class _FloatingNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(20),
+      margin: const EdgeInsets.all(10),
       child: Container(
         height: 80,
         decoration: BoxDecoration(
