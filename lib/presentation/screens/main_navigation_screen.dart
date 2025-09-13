@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hush_sense/presentation/screens/capture_screen.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/utils/haptic_feedback.dart';
 import 'home_screen.dart';
 import 'map_screen.dart';
 import 'rewards_screen.dart';
@@ -16,8 +17,11 @@ class MainNavigationScreen extends ConsumerStatefulWidget {
       _MainNavigationScreenState();
 }
 
-class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
+class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen>
+    with TickerProviderStateMixin {
   int _currentIndex = 2; // Start with Measure screen as it's the main feature
+  late AnimationController _indicatorController;
+  late Animation<double> _indicatorAnimation;
 
   final List<Widget> _screens = [
     const HomeScreen(),
@@ -28,95 +32,207 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _indicatorController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _indicatorAnimation = Tween<double>(
+      begin: _currentIndex.toDouble(),
+      end: _currentIndex.toDouble(),
+    ).animate(CurvedAnimation(
+      parent: _indicatorController,
+      curve: AppConstants.easeInOutCubic,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _indicatorController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _screens),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: AppConstants.surfaceColor,
-          boxShadow: [
-            BoxShadow(
-              color: AppConstants.textPrimary.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.paddingM,
-              vertical: AppConstants.paddingS,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _NavigationItem(
-                  icon: Icons.home_outlined,
-                  activeIcon: Icons.home,
-                  label: 'Home',
-                  isActive: _currentIndex == 0,
-                  onTap: () => _setIndex(0),
-                ),
-                _NavigationItem(
-                  icon: Icons.map_outlined,
-                  activeIcon: Icons.map,
-                  label: 'Map',
-                  isActive: _currentIndex == 1,
-                  onTap: () => _setIndex(1),
-                ),
-                _NavigationItem(
-                  icon: Icons.mic_outlined,
-                  activeIcon: Icons.mic,
-                  label: 'Measure',
-                  isActive: _currentIndex == 2,
-                  onTap: () => _setIndex(2),
-                  isPrimary: true,
-                ),
-                _NavigationItem(
-                  icon: Icons.card_giftcard_outlined,
-                  activeIcon: Icons.card_giftcard,
-                  label: 'Rewards',
-                  isActive: _currentIndex == 3,
-                  onTap: () => _setIndex(3),
-                ),
-                _NavigationItem(
-                  icon: Icons.person_outline,
-                  activeIcon: Icons.person,
-                  label: 'Profile',
-                  isActive: _currentIndex == 4,
-                  onTap: () => _setIndex(4),
-                ),
-              ],
-            ),
-          ),
-        ),
+      bottomNavigationBar: _FloatingNavBar(
+        currentIndex: _currentIndex,
+        indicatorAnimation: _indicatorAnimation,
+        onTap: _setIndex,
       ),
     );
   }
 
   void _setIndex(int index) {
+    if (index == _currentIndex) return;
+    
+    HushHaptics.lightTap();
+    
+    _indicatorAnimation = Tween<double>(
+      begin: _currentIndex.toDouble(),
+      end: index.toDouble(),
+    ).animate(CurvedAnimation(
+      parent: _indicatorController,
+      curve: AppConstants.easeInOutCubic,
+    ));
+    
     setState(() {
       _currentIndex = index;
     });
+    
+    _indicatorController.forward(from: 0.0);
   }
 }
 
-class _NavigationItem extends StatelessWidget {
+class _FloatingNavBar extends StatelessWidget {
+  final int currentIndex;
+  final Animation<double> indicatorAnimation;
+  final Function(int) onTap;
+
+  const _FloatingNavBar({
+    required this.currentIndex,
+    required this.indicatorAnimation,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(20),
+      child: Container(
+        height: 80,
+        decoration: BoxDecoration(
+          color: AppConstants.surfaceColor,
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: AppConstants.deepBlue.withValues(alpha: 0.15),
+              blurRadius: 24,
+              offset: const Offset(0, 8),
+              spreadRadius: 0,
+            ),
+            BoxShadow(
+              color: AppConstants.deepBlue.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Stack(
+              children: [
+                // Animated indicator
+                AnimatedBuilder(
+                  animation: indicatorAnimation,
+                  builder: (context, child) {
+                    return Positioned(
+                      left: _getIndicatorPosition(indicatorAnimation.value, constraints.maxWidth),
+                      top: 12,
+                      child: Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: AppConstants.primaryTeal,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppConstants.primaryTeal.withValues(alpha: 0.3),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                // Navigation items - centered vertically
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _NavItem(
+                        icon: Icons.home_outlined,
+                        activeIcon: Icons.home,
+                        label: 'Home',
+                        isActive: currentIndex == 0,
+                        onTap: () => onTap(0),
+                      ),
+                      _NavItem(
+                        icon: Icons.map_outlined,
+                        activeIcon: Icons.map,
+                        label: 'Map',
+                        isActive: currentIndex == 1,
+                        onTap: () => onTap(1),
+                      ),
+                      _NavItem(
+                        icon: Icons.mic_outlined,
+                        activeIcon: Icons.mic,
+                        label: 'Measure',
+                        isActive: currentIndex == 2,
+                        onTap: () => onTap(2),
+                      ),
+                      _NavItem(
+                        icon: Icons.card_giftcard_outlined,
+                        activeIcon: Icons.card_giftcard,
+                        label: 'Rewards',
+                        isActive: currentIndex == 3,
+                        onTap: () => onTap(3),
+                      ),
+                      _NavItem(
+                        icon: Icons.person_outline,
+                        activeIcon: Icons.person,
+                        label: 'Profile',
+                        isActive: currentIndex == 4,
+                        onTap: () => onTap(4),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  double _getIndicatorPosition(double animationValue, double containerWidth) {
+    // Calculate accurate position based on actual container width
+    const double horizontalPadding = 20.0;
+    const double itemWidth = 56.0;
+    
+    // Available width for items after padding
+    final double availableWidth = containerWidth - (horizontalPadding * 2);
+    
+    // Space between items (4 gaps for 5 items)
+    final double spaceBetweenItems = (availableWidth - (5 * itemWidth)) / 4;
+    
+    // Calculate position for each item
+    final double itemPosition = horizontalPadding + (animationValue * (itemWidth + spaceBetweenItems));
+    
+    return itemPosition;
+  }
+}
+
+class _NavItem extends StatelessWidget {
   final IconData icon;
   final IconData activeIcon;
   final String label;
   final bool isActive;
   final VoidCallback onTap;
-  final bool isPrimary;
 
-  const _NavigationItem({
+  const _NavItem({
     required this.icon,
     required this.activeIcon,
     required this.label,
     required this.isActive,
     required this.onTap,
-    this.isPrimary = false,
   });
 
   @override
@@ -124,38 +240,34 @@ class _NavigationItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppConstants.paddingS,
-          vertical: AppConstants.paddingS,
-        ),
-        decoration: BoxDecoration(
-          color: isActive
-              ? (isPrimary
-                    ? AppConstants.primaryColor
-                    : AppConstants.primaryColor.withValues(alpha: 0.1))
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppConstants.radiusM),
-        ),
+        width: 56,
+        height: 56,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              isActive ? activeIcon : icon,
-              size: AppConstants.iconSizeM,
-              color: isActive
-                  ? (isPrimary ? Colors.white : AppConstants.primaryColor)
-                  : AppConstants.textTertiary,
-            ),
-            const SizedBox(height: AppConstants.paddingXS),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-                color: isActive
-                    ? (isPrimary ? Colors.white : AppConstants.primaryColor)
-                    : AppConstants.textTertiary,
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
+                isActive ? activeIcon : icon,
+                key: ValueKey(isActive),
+                size: 24,
+                color: isActive 
+                    ? AppConstants.surfaceColor 
+                    : AppConstants.textSecondary,
               ),
+            ),
+            const SizedBox(height: 4),
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 200),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                color: isActive 
+                    ? AppConstants.surfaceColor 
+                    : AppConstants.textSecondary,
+                fontFamily: 'Funnel Sans',
+              ),
+              child: Text(label),
             ),
           ],
         ),
@@ -163,4 +275,3 @@ class _NavigationItem extends StatelessWidget {
     );
   }
 }
-
