@@ -420,6 +420,239 @@ class AppTheme {
         color: AppConstants.darkSurface,
         shadowColor: Colors.black.withOpacity(0.3),
       ),
+
+      // Complete dark theme button styles
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          backgroundColor: AppConstants.primaryTeal,
+          foregroundColor: AppConstants.pureWhite,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 16,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Funnel Sans',
+            fontVariations: [FontVariation('wght', 560)],
+          ),
+        ),
+      ),
+
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppConstants.primaryTeal,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 16,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          side: const BorderSide(color: AppConstants.primaryTeal, width: 1.5),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Funnel Sans',
+            fontVariations: [FontVariation('wght', 560)],
+          ),
+        ),
+      ),
+
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppConstants.primaryTeal,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppConstants.paddingM,
+            vertical: AppConstants.paddingS,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppConstants.radiusS),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Funnel Sans',
+            fontVariations: [FontVariation('wght', 520)],
+          ),
+        ),
+      ),
+
+      // Dark input decoration
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppConstants.darkSurface,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusM),
+          borderSide: const BorderSide(color: Color(0xFF374151)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusM),
+          borderSide: const BorderSide(color: Color(0xFF374151)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusM),
+          borderSide: const BorderSide(
+            color: AppConstants.primaryTeal,
+            width: 2,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusM),
+          borderSide: const BorderSide(color: AppConstants.errorColor),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusM),
+          borderSide: const BorderSide(
+            color: AppConstants.errorColor,
+            width: 2,
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppConstants.paddingM,
+          vertical: AppConstants.paddingM,
+        ),
+        hintStyle: const TextStyle(
+          color: AppConstants.darkTextSecondary,
+          fontSize: 16,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 430)],
+        ),
+      ),
+
+      // Dark bottom navigation
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: AppConstants.darkSurface,
+        selectedItemColor: AppConstants.primaryTeal,
+        unselectedItemColor: AppConstants.darkTextSecondary,
+        type: BottomNavigationBarType.fixed,
+        elevation: 8,
+        selectedLabelStyle: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 560)],
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 480)],
+        ),
+      ),
+
+      // Dark text theme
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(
+          fontSize: 57,
+          fontWeight: FontWeight.w400,
+          color: AppConstants.darkTextPrimary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 420)],
+        ),
+        displayMedium: TextStyle(
+          fontSize: 45,
+          fontWeight: FontWeight.w400,
+          color: AppConstants.darkTextPrimary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 420)],
+        ),
+        displaySmall: TextStyle(
+          fontSize: 36,
+          fontWeight: FontWeight.w400,
+          color: AppConstants.darkTextPrimary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 420)],
+        ),
+        headlineLarge: TextStyle(
+          fontSize: 32,
+          fontWeight: FontWeight.w600,
+          color: AppConstants.darkTextPrimary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 680)],
+        ),
+        headlineMedium: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.w600,
+          color: AppConstants.darkTextPrimary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 660)],
+        ),
+        headlineSmall: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+          color: AppConstants.darkTextPrimary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 640)],
+        ),
+        titleLarge: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: AppConstants.darkTextPrimary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 600)],
+        ),
+        titleMedium: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: AppConstants.darkTextPrimary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 560)],
+        ),
+        titleSmall: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: AppConstants.darkTextPrimary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 540)],
+        ),
+        bodyLarge: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: AppConstants.darkTextPrimary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 450)],
+        ),
+        bodyMedium: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          color: AppConstants.darkTextPrimary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 440)],
+        ),
+        bodySmall: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          color: AppConstants.darkTextSecondary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 430)],
+        ),
+        labelLarge: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: AppConstants.darkTextPrimary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 560)],
+        ),
+        labelMedium: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: AppConstants.darkTextPrimary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 540)],
+        ),
+        labelSmall: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: AppConstants.darkTextSecondary,
+          fontFamily: 'Funnel Sans',
+          fontVariations: [FontVariation('wght', 520)],
+        ),
+      ),
     );
   }
 }

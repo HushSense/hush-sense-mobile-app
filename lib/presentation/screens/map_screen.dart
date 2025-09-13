@@ -89,8 +89,9 @@ class _MapScreenState extends ConsumerState<MapScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppConstants.backgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Stack(
         children: [
           // Google Map
@@ -109,13 +110,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
               zoomControlsEnabled: false,
               mapToolbarEnabled: false,
               compassEnabled: false,
-              style: '''[
-                {
-                  "featureType": "poi",
-                  "elementType": "labels",
-                  "stylers": [{"visibility": "off"}]
-                }
-              ]''',
+              // Remove custom styling that might cause issues
+              // style: null,
             ),
           ),
 
@@ -127,7 +123,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                 Container(
                   margin: const EdgeInsets.all(AppConstants.paddingM),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: theme.cardColor,
                     borderRadius: BorderRadius.circular(AppConstants.radiusL),
                     boxShadow: [
                       BoxShadow(
@@ -147,7 +143,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                     indicatorSize: TabBarIndicatorSize.tab,
                     dividerColor: Colors.transparent,
                     labelColor: Colors.white,
-                    unselectedLabelColor: AppConstants.textSecondary,
+                    unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
                     labelStyle: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
@@ -167,7 +163,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                   ),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: theme.cardColor,
                       borderRadius: BorderRadius.circular(AppConstants.radiusL),
                       boxShadow: [
                         BoxShadow(
@@ -181,14 +177,14 @@ class _MapScreenState extends ConsumerState<MapScreen>
                       controller: _searchController,
                       decoration: InputDecoration(
                         hintText: 'Search venue',
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.search,
-                          color: AppConstants.textTertiary,
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                         suffixIcon: IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.tune,
-                            color: AppConstants.textTertiary,
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                           onPressed: () {},
                         ),
@@ -205,16 +201,16 @@ class _MapScreenState extends ConsumerState<MapScreen>
             ),
           ),
 
-          // Bottom Venue Info Panel
+          // Bottom Venue Card
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: Container(
               margin: const EdgeInsets.all(AppConstants.paddingM),
-              padding: const EdgeInsets.all(AppConstants.paddingL),
+              padding: const EdgeInsets.all(AppConstants.paddingM),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: theme.cardColor,
                 borderRadius: BorderRadius.circular(AppConstants.radiusL),
                 boxShadow: [
                   BoxShadow(
@@ -240,25 +236,24 @@ class _MapScreenState extends ConsumerState<MapScreen>
                     ),
                   ),
                   const SizedBox(width: AppConstants.paddingM),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           'Venue',
-                          style: TextStyle(
+                          style: theme.textTheme.titleMedium?.copyWith(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: AppConstants.textPrimary,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
                           'Search venue',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppConstants.textSecondary,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -273,7 +268,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                       color: AppConstants.primaryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Tap to measure',
                       style: TextStyle(
                         fontSize: 12,
@@ -316,6 +311,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
   }
 
   void _showVenueDetails(MeasurementPoint point) {
+    final theme = Theme.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -323,7 +319,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
         margin: const EdgeInsets.all(AppConstants.paddingM),
         padding: const EdgeInsets.all(AppConstants.paddingL),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(AppConstants.radiusL),
         ),
         child: Column(
@@ -357,18 +353,13 @@ class _MapScreenState extends ConsumerState<MapScreen>
                     children: [
                       Text(
                         point.venueName,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: AppConstants.textPrimary,
-                        ),
+                        style: theme.textTheme.titleMedium,
                       ),
                       const SizedBox(height: 4),
                       Text(
                         '${point.venueType} • ${point.decibelLevel} dB',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppConstants.textSecondary,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
