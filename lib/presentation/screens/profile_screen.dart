@@ -172,7 +172,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
@@ -228,7 +228,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           const SizedBox(height: AppConstants.paddingM),
           
           // Name and Username
-          Text(
+          const Text(
             'Sound Scout',
             style: TextStyle(
               fontSize: 24,
@@ -238,7 +238,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             ),
           ),
           const SizedBox(height: 4),
-          Text(
+          const Text(
             '@soundscout_2024',
             style: TextStyle(
               fontSize: 16,
@@ -250,7 +250,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           const SizedBox(height: AppConstants.paddingM),
           
           // Location and Join Date
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
@@ -258,7 +258,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 size: 16,
                 color: AppConstants.textSecondary,
               ),
-              const SizedBox(width: 4),
+              SizedBox(width: 4),
               Text(
                 'Accra, Ghana',
                 style: TextStyle(
@@ -267,13 +267,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                   fontFamily: 'Funnel Sans',
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
               Icon(
                 Icons.calendar_today,
                 size: 16,
                 color: AppConstants.textSecondary,
               ),
-              const SizedBox(width: 4),
+              SizedBox(width: 4),
               Text(
                 'Joined Oct 2024',
                 style: TextStyle(
@@ -290,7 +290,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
   }
 
   Widget _buildQuickStats() {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -302,7 +302,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             fontFamily: 'Funnel Sans',
           ),
         ),
-        const SizedBox(height: AppConstants.paddingM),
+        SizedBox(height: AppConstants.paddingM),
         Row(
           children: [
             Expanded(
@@ -314,7 +314,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 color: AppConstants.primaryTeal,
               ),
             ),
-            const SizedBox(width: AppConstants.paddingM),
+            SizedBox(width: AppConstants.paddingM),
             Expanded(
               child: StatsCard(
                 title: 'City Rank',
@@ -439,7 +439,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: AppConstants.textPrimary,
@@ -464,7 +464,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 children: [
                   item,
                   if (index < items.length - 1)
-                    Divider(
+                    const Divider(
                       height: 1,
                       color: AppConstants.borderColor,
                       indent: 56,
@@ -494,11 +494,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           ),
           elevation: 0,
         ),
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.logout, size: 20),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Text(
               'Sign Out',
               style: TextStyle(
@@ -519,9 +519,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         padding: const EdgeInsets.all(AppConstants.paddingL),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppConstants.cardBackground,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -535,7 +535,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               ),
             ),
             const SizedBox(height: AppConstants.paddingL),
-            Text(
+            const Text(
               'Change Profile Picture',
               style: TextStyle(
                 fontSize: 20,
@@ -590,7 +590,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: AppConstants.textPrimary,
@@ -610,7 +610,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        title: Text(
+        title: const Text(
           'Sign Out',
           style: TextStyle(
             fontWeight: FontWeight.w600,
@@ -618,7 +618,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             fontFamily: 'Funnel Sans',
           ),
         ),
-        content: Text(
+        content: const Text(
           'Are you sure you want to sign out of your account?',
           style: TextStyle(
             color: AppConstants.textSecondary,
@@ -628,7 +628,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
+            child: const Text(
               'Cancel',
               style: TextStyle(
                 color: AppConstants.textSecondary,
@@ -648,7 +648,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Text(
+            child: const Text(
               'Sign Out',
               style: TextStyle(
                 fontFamily: 'Funnel Sans',
