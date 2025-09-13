@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../widgets/profile_menu_item.dart';
+import '../../../main.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -22,7 +23,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
   bool _vibrationEnabled = true;
   bool _locationEnabled = true;
   bool _autoUploadEnabled = false;
-  bool _darkModeEnabled = false;
 
   @override
   void initState() {
@@ -196,12 +196,72 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
     return _buildSection(
       'Appearance',
       [
-        _buildSwitchItem(
-          icon: Icons.dark_mode_outlined,
-          title: 'Dark Mode',
-          subtitle: 'Use dark theme',
-          value: _darkModeEnabled,
-          onChanged: (value) => setState(() => _darkModeEnabled = value),
+        Padding(
+          padding: const EdgeInsets.all(AppConstants.paddingM),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppConstants.primaryTeal.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.dark_mode_outlined, color: AppConstants.primaryTeal, size: 20),
+              ),
+              const SizedBox(width: AppConstants.paddingM),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'App Theme',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppConstants.textPrimary,
+                        fontFamily: 'Funnel Sans',
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    const Text(
+                      'Choose light, dark, or system theme',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppConstants.textSecondary,
+                        fontFamily: 'Funnel Sans',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Consumer(
+                builder: (context, ref, _) {
+                  final themeMode = ref.watch(themeModeProvider);
+                  return DropdownButton<ThemeMode>(
+                    value: themeMode,
+                    items: const [
+                      DropdownMenuItem(
+                        value: ThemeMode.system,
+                        child: Text('System'),
+                      ),
+                      DropdownMenuItem(
+                        value: ThemeMode.light,
+                        child: Text('Light'),
+                      ),
+                      DropdownMenuItem(
+                        value: ThemeMode.dark,
+                        child: Text('Dark'),
+                      ),
+                    ],
+                    onChanged: (mode) {
+                      if (mode != null) ref.read(themeModeProvider.notifier).state = mode;
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         ),
         ProfileMenuItem(
           icon: Icons.palette_outlined,

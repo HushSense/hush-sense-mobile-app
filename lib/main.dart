@@ -31,17 +31,20 @@ void main() async {
   runApp(const ProviderScope(child: HushSenseApp()));
 }
 
-class HushSenseApp extends StatelessWidget {
+final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
+
+class HushSenseApp extends ConsumerWidget {
   const HushSenseApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
     return MaterialApp(
       title: AppConstants.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       home: const SplashScreen(),
     );
   }

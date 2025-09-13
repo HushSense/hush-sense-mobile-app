@@ -66,6 +66,7 @@ dependencies:
   intl: ^0.19.0
   uuid: ^4.5.1
   crypto: ^3.0.3
+  flutter_launcher_icons: ^0.14.4
 
   # Ads - Temporarily removed due to missing AdMob configuration
   # google_mobile_ads: ^5.1.0
