@@ -31,7 +31,7 @@ void main() async {
   runApp(const ProviderScope(child: HushSenseApp()));
 }
 
-final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
+final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.light);
 
 class HushSenseApp extends ConsumerWidget {
   const HushSenseApp({super.key});

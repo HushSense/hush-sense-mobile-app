@@ -117,7 +117,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Profile Header
-              _buildAnimatedSection(0, _buildProfileHeader(), useScale: true),
+              _buildAnimatedSection(0, _buildProfileHeader()),
               const SizedBox(height: AppConstants.paddingXL),
               
               // Quick Stats
