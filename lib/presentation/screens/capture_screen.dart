@@ -78,22 +78,22 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
                 // Location Card
                 _buildLocationCard(locationState),
                 
-                const SizedBox(height: 40),
+                const SizedBox(height: 20),
                 
                 // Main Measurement Circle with Dynamic Visualization
                 _buildMeasurementCircle(measurementState),
                 
-                const SizedBox(height: 40),
+                const SizedBox(height: 20),
                 
                 // Decibel Display
                 _buildDecibelDisplay(measurementState),
                 
-                const SizedBox(height: 32),
+                const SizedBox(height: 20),
                 
                 // Control Buttons
                 _buildControlButtons(measurementState),
                 
-                const SizedBox(height: 32),
+                const SizedBox(height: 20),
                 
                 // Quick Actions
                 _buildQuickActions(),
@@ -223,8 +223,8 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
   Widget _buildMeasurementCircle(MeasurementState measurementState) {
     return Center(
       child: Container(
-        width: 280,
-        height: 280,
+        width: 250,
+        height: 250,
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -446,7 +446,7 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
         Expanded(
           flex: 2,
           child: PremiumButton(
-            text: measurementState.isMeasuring ? 'Stop Recording' : 'Start Recording',
+            text: measurementState.isMeasuring ? 'Stop' : 'Start',
             icon: measurementState.isMeasuring ? Icons.stop : Icons.mic,
             onPressed: () {
               HushHaptics.mediumTap();

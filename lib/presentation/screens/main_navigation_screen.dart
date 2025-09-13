@@ -56,11 +56,15 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppConstants.backgroundColor,
       body: IndexedStack(index: _currentIndex, children: _screens),
-      bottomNavigationBar: _FloatingNavBar(
-        currentIndex: _currentIndex,
-        indicatorAnimation: _indicatorAnimation,
-        onTap: _setIndex,
+      bottomNavigationBar: SafeArea(
+        minimum: const EdgeInsets.only(bottom: 12),
+        child: _FloatingNavBar(
+          currentIndex: _currentIndex,
+          indicatorAnimation: _indicatorAnimation,
+          onTap: _setIndex,
+        ),
       ),
     );
   }
@@ -100,7 +104,7 @@ class _FloatingNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(10),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       child: Container(
         height: 80,
         decoration: BoxDecoration(

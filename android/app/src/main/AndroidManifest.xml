@@ -3,6 +3,9 @@
         android:label="hush_sense"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIAIzaSyCK-HrgWTGrEwx5DKNbfEAUZoQKtXlfphk" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

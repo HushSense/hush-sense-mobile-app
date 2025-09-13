@@ -20,7 +20,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
   final _nameController = TextEditingController(text: 'Sound Scout');
   final _usernameController = TextEditingController(text: 'soundscout_2024');
   final _emailController = TextEditingController(text: 'scout@hushsense.com');
-  final _locationController = TextEditingController(text: 'San Francisco, CA');
+  final _locationController = TextEditingController(text: 'Accra, Ghana');
   final _bioController = TextEditingController(text: 'Passionate about mapping urban soundscapes and creating quieter cities.');
 
   @override
@@ -522,7 +522,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
             Expanded(
               child: ListView(
                 children: [
-                  _buildLocationOption('San Francisco, CA', true),
+                  _buildLocationOption('Accra, Ghana', true),
                   _buildLocationOption('New York, NY', false),
                   _buildLocationOption('Los Angeles, CA', false),
                   _buildLocationOption('Chicago, IL', false),

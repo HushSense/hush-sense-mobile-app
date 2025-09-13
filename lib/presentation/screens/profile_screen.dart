@@ -260,7 +260,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               ),
               const SizedBox(width: 4),
               Text(
-                'San Francisco, CA',
+                'Accra, Ghana',
                 style: TextStyle(
                   fontSize: 14,
                   color: AppConstants.textSecondary,
