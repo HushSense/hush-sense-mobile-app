@@ -98,8 +98,9 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppConstants.backgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppConstants.paddingL),
@@ -111,7 +112,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               const SizedBox(height: AppConstants.paddingL),
 
               // Wallet Balance Card
-              _buildAnimatedSection(1, _buildWalletCard(), useScale: true),
+              _buildAnimatedSection(1, _buildWalletCard()),
               const SizedBox(height: AppConstants.paddingL),
 
               // Earning Stats
@@ -137,32 +138,26 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
   }
 
   Widget _buildHeader(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Rewards',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: AppConstants.textPrimary,
-            fontFamily: 'Funnel Sans',
-          ),
+          style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(
           'Your contribution to the sound map is rewarded',
-          style: TextStyle(
-            fontSize: 16,
-            color: AppConstants.textSecondary,
-            fontFamily: 'Funnel Sans',
-          ),
+          style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
         ),
       ],
     );
   }
 
   Widget _buildWalletCard() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppConstants.paddingL),
@@ -170,23 +165,21 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            AppConstants.primaryTeal,
-            AppConstants.primaryColor,
-            AppConstants.primaryTeal.withValues(alpha: 0.8),
-          ],
+          colors: isDark
+              ? [theme.colorScheme.primary, theme.colorScheme.secondary, theme.colorScheme.primary.withOpacity(0.8)]
+              : [theme.colorScheme.primary, theme.colorScheme.secondary, theme.colorScheme.primary.withOpacity(0.8)],
           stops: const [0.0, 0.6, 1.0],
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppConstants.primaryTeal.withValues(alpha: 0.4),
+            color: theme.colorScheme.primary.withOpacity(0.25),
             blurRadius: 20,
             offset: const Offset(0, 10),
             spreadRadius: 2,
           ),
           BoxShadow(
-            color: AppConstants.primaryColor.withValues(alpha: 0.2),
+            color: theme.colorScheme.secondary.withOpacity(0.15),
             blurRadius: 40,
             offset: const Offset(0, 20),
           ),
@@ -231,21 +224,17 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                     children: [
                       Text(
                         'HUSH Wallet',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
+                        style: theme.textTheme.titleLarge?.copyWith(
                           color: Colors.white,
-                          fontFamily: 'Funnel Sans',
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Decentralized Rewards',
-                        style: TextStyle(
-                          fontSize: 12,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.white.withOpacity(0.7),
                           fontWeight: FontWeight.w500,
-                          color: Colors.white.withValues(alpha: 0.7),
-                          fontFamily: 'Funnel Sans',
                         ),
                       ),
                     ],
@@ -299,11 +288,9 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                 children: [
                   Text(
                     '2,847',
-                    style: TextStyle(
-                      fontSize: 42,
-                      fontWeight: FontWeight.w900,
+                    style: theme.textTheme.displayMedium?.copyWith(
                       color: Colors.white,
-                      fontFamily: 'Funnel Sans',
+                      fontWeight: FontWeight.w900,
                       height: 1.0,
                     ),
                   ),
@@ -318,11 +305,9 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                       ),
                       child: Text(
                         '+12%',
-                        style: TextStyle(
-                          fontSize: 12,
+                        style: theme.textTheme.bodySmall?.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: AppConstants.accentGold,
-                          fontFamily: 'Funnel Sans',
+                          color: theme.colorScheme.secondary,
                         ),
                       ),
                     ),
@@ -331,27 +316,23 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               ),
               Text(
                 '\$HUSH Tokens',
-                style: TextStyle(
-                  fontSize: 16,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: Colors.white.withOpacity(0.9),
                   fontWeight: FontWeight.w600,
-                  color: Colors.white.withValues(alpha: 0.9),
-                  fontFamily: 'Funnel Sans',
                 ),
               ),
               const SizedBox(height: AppConstants.paddingM),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: theme.cardColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '≈ \$142.35 USD • 24h: +\$16.80',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface.withOpacity(0.8),
                     fontWeight: FontWeight.w600,
-                    color: Colors.white.withValues(alpha: 0.8),
-                    fontFamily: 'Funnel Sans',
                   ),
                 ),
               ),
@@ -363,17 +344,13 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
   }
 
   Widget _buildEarningStats() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Earning Breakdown',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppConstants.textPrimary,
-            fontFamily: 'Funnel Sans',
-          ),
+          style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: AppConstants.paddingM),
         Row(
@@ -428,13 +405,14 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
   }
 
   Widget _buildEarningCard(String title, String value, String subtitle, IconData icon, Color color) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(AppConstants.paddingM),
       decoration: BoxDecoration(
-        color: AppConstants.surfaceColor,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
         border: Border.all(
-          color: color.withValues(alpha: 0.2),
+          color: color.withOpacity(0.2),
         ),
       ),
       child: Column(
@@ -446,7 +424,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -458,11 +436,9 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               const Spacer(),
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 12,
+                style: theme.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: AppConstants.textSecondary,
-                  fontFamily: 'Funnel Sans',
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -470,20 +446,16 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
           const SizedBox(height: AppConstants.paddingM),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 20,
+            style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
-              color: AppConstants.textPrimary,
-              fontFamily: 'Funnel Sans',
+              color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: TextStyle(
-              fontSize: 11,
-              color: AppConstants.textSecondary,
-              fontFamily: 'Funnel Sans',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ],
