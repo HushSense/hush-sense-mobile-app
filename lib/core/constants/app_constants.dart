@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AppConstants {
+  // Card & Border Colors
+  static const Color cardBackground = surfaceColor;
+  static const Color borderColor = Color(0xFFE5E7EB); // Tailwind gray-200
+
   // App Information
   static const String appName = 'HushSense';
   static const String appVersion = '1.0.0';
