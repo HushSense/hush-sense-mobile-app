@@ -79,65 +79,85 @@ class _PremiumButtonState extends State<PremiumButton>
       builder: (context, child) {
         return Transform.scale(
           scale: _scaleAnimation.value,
-          child: GestureDetector(
-            onTapDown: _onTapDown,
-            onTapUp: _onTapUp,
-            onTapCancel: _onTapCancel,
-            onTap: widget.onPressed,
-            child: AnimatedContainer(
-              duration: AppConstants.animationNormal,
-              curve: AppConstants.easeInOutCubic,
-              width: widget.isExpanded ? double.infinity : null,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 16,
-              ),
-              decoration: BoxDecoration(
-                color: _getBackgroundColor(),
-                borderRadius: BorderRadius.circular(24),
-                border: _getBorder(),
-                boxShadow: _getShadow(),
-              ),
-              child: Row(
-                mainAxisSize: widget.isExpanded 
-                    ? MainAxisSize.max 
-                    : MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (widget.isLoading) ...[
-                    SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: WaveformAnimation(
-                        isActive: true,
-                        amplitude: 0.7,
-                        color: _getTextColor(),
-                        height: 18,
-                        waveCount: 5,
-                        duration: const Duration(milliseconds: 1200),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                  ] else if (widget.icon != null) ...[
-                    Icon(
-                      widget.icon,
-                      color: _getTextColor(),
-                      size: 18,
-                    ),
-                    const SizedBox(width: 8),
-                  ],
-                  Text(
-                    widget.text,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: _getTextColor(),
-                      fontFamily: 'Funnel Sans',
-                    ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final maxW = constraints.maxWidth.isFinite ? constraints.maxWidth : double.infinity;
+              final compact = maxW.isFinite && maxW < 120;
+              final ultraCompact = maxW.isFinite && maxW < 90;
+              final hPad = compact ? 12.0 : 24.0;
+              final vPad = compact ? 12.0 : 16.0;
+              final iconSize = compact ? 16.0 : 18.0;
+              final gap = compact ? 6.0 : 8.0;
+
+              return GestureDetector(
+                onTapDown: _onTapDown,
+                onTapUp: _onTapUp,
+                onTapCancel: _onTapCancel,
+                onTap: widget.onPressed,
+                child: AnimatedContainer(
+                  duration: AppConstants.animationNormal,
+                  curve: AppConstants.easeInOutCubic,
+                  width: widget.isExpanded ? double.infinity : null,
+                  constraints: const BoxConstraints(minWidth: 0),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ultraCompact ? 10.0 : hPad,
+                    vertical: ultraCompact ? 10.0 : vPad,
                   ),
-                ],
-              ),
-            ),
+                  decoration: BoxDecoration(
+                    color: _getBackgroundColor(),
+                    borderRadius: BorderRadius.circular(24),
+                    border: _getBorder(),
+                    boxShadow: _getShadow(),
+                  ),
+                  child: Row(
+                    mainAxisSize: widget.isExpanded 
+                        ? MainAxisSize.max 
+                        : MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (widget.isLoading) ...[
+                        SizedBox(
+                          width: compact ? 20 : 24,
+                          height: compact ? 20 : 24,
+                          child: WaveformAnimation(
+                            isActive: true,
+                            amplitude: 0.7,
+                            color: _getTextColor(),
+                            height: compact ? 14 : 18,
+                            waveCount: 5,
+                            duration: const Duration(milliseconds: 1200),
+                          ),
+                        ),
+                        SizedBox(width: compact ? 8 : 12),
+                      ] else if (widget.icon != null) ...[
+                        Icon(
+                          widget.icon,
+                          color: _getTextColor(),
+                          size: iconSize,
+                        ),
+                        if (!ultraCompact) SizedBox(width: gap),
+                      ],
+                      if (!ultraCompact)
+                        Flexible(
+                          child: Text(
+                            widget.text,
+                            maxLines: 2,
+                            softWrap: true,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: compact ? 14 : 16,
+                              fontWeight: FontWeight.w600,
+                              color: _getTextColor(),
+                              fontFamily: 'Funnel Sans',
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         );
       },

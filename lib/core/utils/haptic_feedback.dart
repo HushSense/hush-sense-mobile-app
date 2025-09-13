@@ -1,5 +1,4 @@
 import 'package:flutter/services.dart';
-import '../constants/app_constants.dart';
 
 /// HushSense haptic feedback utilities for premium UX
 class HushHaptics {

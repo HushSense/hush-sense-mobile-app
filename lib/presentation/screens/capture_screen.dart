@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:math' as math;
 import '../../core/constants/app_constants.dart';
 import '../providers/app_providers.dart';
 import '../../core/animations/waveform_animation.dart';
+import '../../core/widgets/premium_button.dart';
+import '../../core/utils/haptic_feedback.dart';
 
 class MeasureScreen extends ConsumerStatefulWidget {
   const MeasureScreen({super.key});
@@ -15,6 +18,8 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
     with TickerProviderStateMixin {
   late AnimationController _pulseController;
   late AnimationController _rippleController;
+  late AnimationController _waveformController;
+  late AnimationController _breathingController;
 
   @override
   void initState() {
@@ -27,12 +32,25 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
+    _waveformController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+    _breathingController = AnimationController(
+      duration: const Duration(milliseconds: 3000),
+      vsync: this,
+    );
+    
+    // Start subtle breathing animation
+    _breathingController.repeat(reverse: true);
   }
 
   @override
   void dispose() {
     _pulseController.dispose();
     _rippleController.dispose();
+    _waveformController.dispose();
+    _breathingController.dispose();
     super.dispose();
   }
 
@@ -42,7 +60,7 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
     final locationState = ref.watch(locationProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppConstants.backgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -62,7 +80,7 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
                 
                 const SizedBox(height: 40),
                 
-                // Main Measurement Circle
+                // Main Measurement Circle with Dynamic Visualization
                 _buildMeasurementCircle(measurementState),
                 
                 const SizedBox(height: 40),
@@ -142,9 +160,15 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE9ECEF)),
+        color: AppConstants.surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: AppConstants.deepBlue.withValues(alpha: 0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -204,75 +228,116 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
         child: Stack(
           alignment: Alignment.center,
           children: [
-            // Outer ripple circles
+            // Outer ambient glow
+            AnimatedBuilder(
+              animation: _breathingController,
+              builder: (context, child) {
+                return Container(
+                  width: 280 + (20 * _breathingController.value),
+                  height: 280 + (20 * _breathingController.value),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        AppConstants.primaryTeal.withOpacity(0.05),
+                        AppConstants.primaryTeal.withOpacity(0.02),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            
+            // Dynamic ripple circles when measuring
             if (measurementState.isMeasuring) ...[
               _buildRippleCircle(280, 0.1),
-              _buildRippleCircle(240, 0.15),
-              _buildRippleCircle(200, 0.2),
+              _buildRippleCircle(240, 0.2),
+              _buildRippleCircle(200, 0.3),
             ],
             
-            // Main measurement circle
-            Container(
-              width: 160,
-              height: 160,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppConstants.primaryColor.withOpacity(0.3),
-                    AppConstants.primaryColor.withOpacity(0.1),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-              child: Container(
-                margin: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppConstants.primaryColor.withOpacity(0.1),
-                  border: Border.all(
-                    color: AppConstants.primaryColor,
-                    width: 2,
-                  ),
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: AppConstants.primaryColor,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        width: 4,
-                        height: 4,
-                        decoration: const BoxDecoration(
-                          color: AppConstants.primaryColor,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        width: 6,
-                        height: 6,
-                        decoration: const BoxDecoration(
-                          color: AppConstants.primaryColor,
-                          shape: BoxShape.circle,
-                        ),
+            // Main measurement circle with premium styling
+            AnimatedBuilder(
+              animation: _breathingController,
+              builder: (context, child) {
+                return Container(
+                  width: 180 + (8 * _breathingController.value),
+                  height: 180 + (8 * _breathingController.value),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        AppConstants.primaryTeal.withOpacity(0.15),
+                        AppConstants.primaryTeal.withOpacity(0.08),
+                        AppConstants.primaryTeal.withOpacity(0.03),
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppConstants.primaryTeal.withOpacity(0.2),
+                        blurRadius: 30,
+                        spreadRadius: 5,
                       ),
                     ],
                   ),
-                ),
-              ),
+                  child: Container(
+                    margin: const EdgeInsets.all(25),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppConstants.surfaceColor,
+                      border: Border.all(
+                        color: AppConstants.primaryTeal,
+                        width: 2.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppConstants.deepBlue.withOpacity(0.1),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: measurementState.isMeasuring
+                          ? _buildDynamicWaveform(measurementState)
+                          : _buildStaticMicrophone(),
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
       ),
+    );
+  }
+  
+  Widget _buildDynamicWaveform(MeasurementState measurementState) {
+    return WaveformAnimation(
+      isActive: true,
+      amplitude: math.min(1.0, measurementState.currentDecibelLevel / 80.0),
+      color: AppConstants.primaryTeal,
+      height: 40,
+      waveCount: 9,
+      duration: const Duration(milliseconds: 800),
+    );
+  }
+  
+  Widget _buildStaticMicrophone() {
+    return AnimatedBuilder(
+      animation: _breathingController,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: 1.0 + (0.1 * _breathingController.value),
+          child: Icon(
+            Icons.mic,
+            size: 32,
+            color: AppConstants.primaryTeal.withOpacity(
+              0.6 + (0.4 * _breathingController.value),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -365,80 +430,38 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
       children: [
         // Venue Check-in Button
         Expanded(
-          child: Container(
-            height: 48,
-            decoration: BoxDecoration(
-              border: Border.all(color: AppConstants.primaryColor),
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: TextButton.icon(
-              onPressed: measurementState.isMeasuring ? null : () {},
-              icon: const Icon(
-                Icons.store,
-                color: AppConstants.primaryColor,
-                size: 16,
-              ),
-              label: const Text(
-                'Venue\nCheck-in',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppConstants.primaryColor,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              style: TextButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-              ),
-            ),
+          child: PremiumButton(
+            text: 'Venue\nCheck-in',
+            icon: Icons.store,
+            onPressed: measurementState.isMeasuring ? null : () {
+              HushHaptics.lightTap();
+            },
+            style: PremiumButtonStyle.secondary,
           ),
         ),
 
         const SizedBox(width: 12),
 
-        // Main Record Button
+        // Main Record Button with Premium Styling
         Expanded(
           flex: 2,
-          child: Container(
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () {
-                if (measurementState.isMeasuring) {
-                  ref.read(measurementStateProvider.notifier).stopMeasurement();
-                  _rippleController.stop();
-                } else {
-                  ref.read(measurementStateProvider.notifier).startMeasurement();
-                  _rippleController.repeat();
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppConstants.primaryColor,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                elevation: 0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    measurementState.isMeasuring ? Icons.stop : Icons.mic,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    measurementState.isMeasuring ? 'Stop' : 'Start Recording',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          child: PremiumButton(
+            text: measurementState.isMeasuring ? 'Stop Recording' : 'Start Recording',
+            icon: measurementState.isMeasuring ? Icons.stop : Icons.mic,
+            onPressed: () {
+              HushHaptics.mediumTap();
+              if (measurementState.isMeasuring) {
+                ref.read(measurementStateProvider.notifier).stopMeasurement();
+                _rippleController.stop();
+                _waveformController.stop();
+              } else {
+                ref.read(measurementStateProvider.notifier).startMeasurement();
+                _rippleController.repeat();
+                _waveformController.repeat();
+              }
+            },
+            style: PremiumButtonStyle.primary,
+            isExpanded: true,
           ),
         ),
 
@@ -446,33 +469,13 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
 
         // Report Button
         Expanded(
-          child: Container(
-            height: 48,
-            decoration: BoxDecoration(
-              border: Border.all(color: AppConstants.primaryColor),
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: TextButton.icon(
-              onPressed: measurementState.isMeasuring ? null : () {},
-              icon: const Icon(
-                Icons.report,
-                color: AppConstants.primaryColor,
-                size: 16,
-              ),
-              label: const Text(
-                'Report',
-                style: TextStyle(
-                  color: AppConstants.primaryColor,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              style: TextButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-              ),
-            ),
+          child: PremiumButton(
+            text: 'Report',
+            icon: Icons.report,
+            onPressed: measurementState.isMeasuring ? null : () {
+              HushHaptics.lightTap();
+            },
+            style: PremiumButtonStyle.secondary,
           ),
         ),
       ],
@@ -483,11 +486,9 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Quick Actions',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
             color: AppConstants.textPrimary,
           ),
         ),
@@ -499,7 +500,9 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
                 icon: Icons.history,
                 title: 'History',
                 subtitle: 'View past measurements',
-                onTap: () {},
+                onTap: () {
+                  HushHaptics.lightTap();
+                },
               ),
             ),
             const SizedBox(width: 16),
@@ -508,7 +511,9 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
                 icon: Icons.analytics,
                 title: 'Analytics',
                 subtitle: 'See your trends',
-                onTap: () {},
+                onTap: () {
+                  HushHaptics.lightTap();
+                },
               ),
             ),
           ],
@@ -536,11 +541,17 @@ class _QuickActionCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0xFFF8F9FA),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE9ECEF)),
+          color: AppConstants.surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppConstants.deepBlue.withOpacity(0.06),
+              blurRadius: 12,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
