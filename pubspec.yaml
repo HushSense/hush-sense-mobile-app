@@ -121,6 +121,18 @@ flutter:
         - asset: assets/fonts/TrajanPro-Regular.ttf
         - asset: assets/fonts/TrajanPro-Bold.otf
           weight: 700
+ 
+    # Funnel Sans (Variable + essential static fallbacks)
+    - family: Funnel Sans
+      fonts:
+        - asset: assets/fonts/FunnelSans-VariableFont_wght.ttf
+        - asset: assets/fonts/FunnelSans-Italic-VariableFont_wght.ttf
+          style: italic
+        # Static fallbacks for compatibility
+        - asset: assets/fonts/static/FunnelSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/static/FunnelSans-SemiBold.ttf
+          weight: 600
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
