@@ -113,7 +113,7 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: AppConstants.primaryColor.withOpacity(0.1),
+            color: AppConstants.primaryColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Icon(
@@ -222,7 +222,7 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
 
   Widget _buildMeasurementCircle(MeasurementState measurementState) {
     return Center(
-      child: Container(
+      child: SizedBox(
         width: 250,
         height: 250,
         child: Stack(
@@ -239,8 +239,8 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        AppConstants.primaryTeal.withOpacity(0.05),
-                        AppConstants.primaryTeal.withOpacity(0.02),
+                        AppConstants.primaryTeal.withValues(alpha: 0.05),
+                        AppConstants.primaryTeal.withValues(alpha: 0.02),
                         Colors.transparent,
                       ],
                     ),
@@ -267,14 +267,14 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        AppConstants.primaryTeal.withOpacity(0.15),
-                        AppConstants.primaryTeal.withOpacity(0.08),
-                        AppConstants.primaryTeal.withOpacity(0.03),
+                        AppConstants.primaryTeal.withValues(alpha: 0.15),
+                        AppConstants.primaryTeal.withValues(alpha: 0.08),
+                        AppConstants.primaryTeal.withValues(alpha: 0.03),
                       ],
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: AppConstants.primaryTeal.withOpacity(0.2),
+                        color: AppConstants.primaryTeal.withValues(alpha: 0.2),
                         blurRadius: 30,
                         spreadRadius: 5,
                       ),
@@ -291,7 +291,7 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: AppConstants.deepBlue.withOpacity(0.1),
+                          color: AppConstants.deepBlue.withValues(alpha: 0.1),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -332,8 +332,8 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
           child: Icon(
             Icons.mic,
             size: 32,
-            color: AppConstants.primaryTeal.withOpacity(
-              0.6 + (0.4 * _breathingController.value),
+            color: AppConstants.primaryTeal.withValues(
+              alpha: 0.6 + (0.4 * _breathingController.value),
             ),
           ),
         );
@@ -351,9 +351,7 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: AppConstants.primaryColor.withOpacity(
-                opacity * (1 - _rippleController.value),
-              ),
+              color: AppConstants.primaryColor.withValues(alpha: opacity * (1 - _rippleController.value)),
               width: 1,
             ),
           ),
@@ -547,7 +545,7 @@ class _QuickActionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: AppConstants.deepBlue.withOpacity(0.06),
+              color: AppConstants.deepBlue.withValues(alpha: 0.06),
               blurRadius: 12,
               offset: const Offset(0, 2),
             ),

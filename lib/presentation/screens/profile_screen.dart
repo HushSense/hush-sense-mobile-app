@@ -292,8 +292,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           'Your Impact',
           style: theme.textTheme.titleMedium,
         ),
-        SizedBox(height: AppConstants.paddingM),
-        Row(
+        const SizedBox(height: AppConstants.paddingM),
+        const Row(
           children: [
             Expanded(
               child: StatsCard(

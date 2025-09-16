@@ -15,9 +15,9 @@ class ActivityHistoryScreen extends ConsumerWidget {
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back, color: AppConstants.textPrimary),
+          icon: const Icon(Icons.arrow_back, color: AppConstants.textPrimary),
         ),
-        title: Text(
+        title: const Text(
           'Activity History',
           style: TextStyle(
             color: AppConstants.textPrimary,
@@ -95,7 +95,7 @@ class ActivityHistoryScreen extends ConsumerWidget {
               children: [
                 Text(
                   a['title'] as String,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: AppConstants.textPrimary,
@@ -105,7 +105,7 @@ class ActivityHistoryScreen extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(
                   a['subtitle'] as String,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: AppConstants.textSecondary,
                     fontFamily: 'Funnel Sans',
@@ -132,7 +132,7 @@ class ActivityHistoryScreen extends ConsumerWidget {
             ),
             child: Text(
               a['points'] as String,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: AppConstants.accentGold,

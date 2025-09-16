@@ -88,12 +88,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back,
             color: AppConstants.textPrimary,
           ),
         ),
-        title: Text(
+        title: const Text(
           'Settings',
           style: TextStyle(
             color: AppConstants.textPrimary,
@@ -204,17 +204,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppConstants.primaryTeal.withOpacity(0.1),
+                  color: AppConstants.primaryTeal.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(Icons.dark_mode_outlined, color: AppConstants.primaryTeal, size: 20),
               ),
               const SizedBox(width: AppConstants.paddingM),
-              Expanded(
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'App Theme',
                       style: TextStyle(
                         fontSize: 16,
@@ -223,8 +223,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                         fontFamily: 'Funnel Sans',
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    const Text(
+                    SizedBox(height: 2),
+                    Text(
                       'Choose light, dark, or system theme',
                       style: TextStyle(
                         fontSize: 14,
@@ -311,7 +311,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: AppConstants.textPrimary,
@@ -336,7 +336,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                 children: [
                   item,
                   if (index < items.length - 1)
-                    Divider(
+                    const Divider(
                       height: 1,
                       color: AppConstants.borderColor,
                       indent: 56,
@@ -382,7 +382,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: AppConstants.textPrimary,
@@ -392,7 +392,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: AppConstants.textSecondary,
                     fontFamily: 'Funnel Sans',
@@ -420,7 +420,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        title: Text(
+        title: const Text(
           'Export Data',
           style: TextStyle(
             fontWeight: FontWeight.w600,
@@ -432,7 +432,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Choose what data to export:',
               style: TextStyle(
                 color: AppConstants.textSecondary,
@@ -448,7 +448,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
+            child: const Text(
               'Cancel',
               style: TextStyle(
                 color: AppConstants.textSecondary,
@@ -468,7 +468,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Text(
+            child: const Text(
               'Export',
               style: TextStyle(
                 fontFamily: 'Funnel Sans',
@@ -493,7 +493,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         ),
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             color: AppConstants.textPrimary,
             fontFamily: 'Funnel Sans',
           ),
@@ -518,7 +518,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
             fontFamily: 'Funnel Sans',
           ),
         ),
-        content: Text(
+        content: const Text(
           'This action cannot be undone. All your data, measurements, and rewards will be permanently deleted.',
           style: TextStyle(
             color: AppConstants.textSecondary,
@@ -528,7 +528,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
+            child: const Text(
               'Cancel',
               style: TextStyle(
                 color: AppConstants.textSecondary,
@@ -548,7 +548,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Text(
+            child: const Text(
               'Delete',
               style: TextStyle(
                 fontFamily: 'Funnel Sans',
@@ -567,9 +567,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         padding: const EdgeInsets.all(AppConstants.paddingL),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppConstants.cardBackground,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -583,7 +583,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
               ),
             ),
             const SizedBox(height: AppConstants.paddingL),
-            Text(
+            const Text(
               'Choose Theme Color',
               style: TextStyle(
                 fontSize: 20,
@@ -632,12 +632,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                 ),
               ],
             ),
-            child: isSelected ? Icon(Icons.check, color: Colors.white) : null,
+            child: isSelected ? const Icon(Icons.check, color: Colors.white) : null,
           ),
           const SizedBox(height: 8),
           Text(
             name,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 12,
               color: AppConstants.textPrimary,
               fontFamily: 'Funnel Sans',
@@ -664,7 +664,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        title: Text(
+        title: const Text(
           'Clear Cache',
           style: TextStyle(
             fontWeight: FontWeight.w600,
@@ -672,7 +672,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
             fontFamily: 'Funnel Sans',
           ),
         ),
-        content: Text(
+        content: const Text(
           'This will clear temporary files and free up storage space. Your data will not be affected.',
           style: TextStyle(
             color: AppConstants.textSecondary,
@@ -682,7 +682,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
+            child: const Text(
               'Cancel',
               style: TextStyle(
                 color: AppConstants.textSecondary,
@@ -702,7 +702,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Text(
+            child: const Text(
               'Clear',
               style: TextStyle(
                 fontFamily: 'Funnel Sans',

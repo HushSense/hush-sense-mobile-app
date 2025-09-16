@@ -166,20 +166,20 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isDark
-              ? [theme.colorScheme.primary, theme.colorScheme.secondary, theme.colorScheme.primary.withOpacity(0.8)]
-              : [theme.colorScheme.primary, theme.colorScheme.secondary, theme.colorScheme.primary.withOpacity(0.8)],
+              ? [theme.colorScheme.primary, theme.colorScheme.secondary, theme.colorScheme.primary.withValues(alpha: 0.8)]
+              : [theme.colorScheme.primary, theme.colorScheme.secondary, theme.colorScheme.primary.withValues(alpha: 0.8)],
           stops: const [0.0, 0.6, 1.0],
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: theme.colorScheme.primary.withOpacity(0.25),
+            color: theme.colorScheme.primary.withValues(alpha: 0.25),
             blurRadius: 20,
             offset: const Offset(0, 10),
             spreadRadius: 2,
           ),
           BoxShadow(
-            color: theme.colorScheme.secondary.withOpacity(0.15),
+            color: theme.colorScheme.secondary.withValues(alpha: 0.15),
             blurRadius: 40,
             offset: const Offset(0, 20),
           ),
@@ -233,7 +233,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                       Text(
                         'Decentralized Rewards',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.white.withOpacity(0.7),
+                          color: Colors.white.withValues(alpha: 0.7),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -268,7 +268,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                           ),
                         ),
                         const SizedBox(width: 6),
-                        Text(
+                        const Text(
                           'Connected',
                           style: TextStyle(
                             fontSize: 12,
@@ -317,7 +317,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               Text(
                 '\$HUSH Tokens',
                 style: theme.textTheme.titleMedium?.copyWith(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -325,13 +325,13 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: theme.cardColor.withOpacity(0.1),
+                  color: theme.cardColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '≈ \$142.35 USD • 24h: +\$16.80',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.8),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -412,7 +412,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
         border: Border.all(
-          color: color.withOpacity(0.2),
+          color: color.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -424,7 +424,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -470,7 +470,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Achievements',
               style: TextStyle(
                 fontSize: 20,
@@ -483,7 +483,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               onPressed: () {
                 // TODO: Navigate to full achievements
               },
-              child: Text(
+              child: const Text(
                 'View All',
                 style: TextStyle(
                   color: AppConstants.primaryTeal,
@@ -584,7 +584,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'City Leaderboard',
               style: TextStyle(
                 fontSize: 20,
@@ -599,7 +599,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                 color: AppConstants.primaryTeal.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Text(
+              child: const Text(
                 'Rank #47',
                 style: TextStyle(
                   fontSize: 12,
@@ -660,7 +660,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               ),
               Text(
                 '$tokens \$HUSH',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: AppConstants.textSecondary,
                   fontFamily: 'Funnel Sans',
@@ -686,7 +686,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Redeem Rewards',
           style: TextStyle(
             fontSize: 20,
@@ -755,7 +755,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: AppConstants.textPrimary,
@@ -765,7 +765,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                 const SizedBox(height: 2),
                 Text(
                   description,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: AppConstants.textSecondary,
                     fontFamily: 'Funnel Sans',

@@ -28,9 +28,9 @@ class LanguageScreen extends ConsumerWidget {
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back, color: AppConstants.textPrimary),
+          icon: const Icon(Icons.arrow_back, color: AppConstants.textPrimary),
         ),
-        title: Text(
+        title: const Text(
           'Language',
           style: TextStyle(
             color: AppConstants.textPrimary,
@@ -47,9 +47,9 @@ class LanguageScreen extends ConsumerWidget {
           final lang = languages[i];
           final isSelected = lang['code'] == selectedCode;
           return ListTile(
-            leading: Icon(Icons.language, color: AppConstants.primaryTeal),
-            title: Text(lang['name']!, style: TextStyle(fontFamily: 'Funnel Sans')),
-            trailing: isSelected ? Icon(Icons.check, color: AppConstants.primaryTeal) : null,
+            leading: const Icon(Icons.language, color: AppConstants.primaryTeal),
+            title: Text(lang['name']!, style: const TextStyle(fontFamily: 'Funnel Sans')),
+            trailing: isSelected ? const Icon(Icons.check, color: AppConstants.primaryTeal) : null,
             onTap: () {
               // TODO: Change language
             },

@@ -166,21 +166,21 @@ class _PremiumButtonState extends State<PremiumButton>
 
   Color _getBackgroundColor() {
     if (widget.onPressed == null || widget.isLoading) {
-      return AppConstants.softGray.withOpacity(0.3);
+      return AppConstants.softGray.withValues(alpha: 0.3);
     }
 
     switch (widget.style) {
       case PremiumButtonStyle.primary:
         return _isPressed 
-            ? AppConstants.primaryTeal.withOpacity(0.8)
+            ? AppConstants.primaryTeal.withValues(alpha: 0.8)
             : AppConstants.primaryTeal;
       case PremiumButtonStyle.secondary:
         return _isPressed
-            ? AppConstants.mutedGreenBg.withOpacity(0.8)
+            ? AppConstants.mutedGreenBg.withValues(alpha: 0.8)
             : AppConstants.pureWhite;
       case PremiumButtonStyle.ghost:
         return _isPressed
-            ? AppConstants.primaryTeal.withOpacity(0.1)
+            ? AppConstants.primaryTeal.withValues(alpha: 0.1)
             : Colors.transparent;
     }
   }
@@ -205,7 +205,7 @@ class _PremiumButtonState extends State<PremiumButton>
         widget.style == PremiumButtonStyle.ghost) {
       return Border.all(
         color: widget.onPressed == null || widget.isLoading
-            ? AppConstants.softGray.withOpacity(0.3)
+            ? AppConstants.softGray.withValues(alpha: 0.3)
             : AppConstants.primaryTeal,
         width: 1.5,
       );
@@ -219,7 +219,7 @@ class _PremiumButtonState extends State<PremiumButton>
         !widget.isLoading) {
       return [
         BoxShadow(
-          color: AppConstants.primaryTeal.withOpacity(0.3),
+          color: AppConstants.primaryTeal.withValues(alpha: 0.3),
           blurRadius: 8,
           offset: const Offset(0, 4),
         ),
@@ -260,7 +260,7 @@ class PremiumFAB extends StatelessWidget {
           color: AppConstants.primaryTeal,
           boxShadow: [
             BoxShadow(
-              color: AppConstants.primaryTeal.withOpacity(0.3),
+              color: AppConstants.primaryTeal.withValues(alpha: 0.3),
               blurRadius: 16,
               offset: const Offset(0, 8),
             ),
@@ -312,7 +312,7 @@ class PremiumCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: hasShadow ? [
           BoxShadow(
-            color: AppConstants.deepBlue.withOpacity(0.08),
+            color: AppConstants.deepBlue.withValues(alpha: 0.08),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),

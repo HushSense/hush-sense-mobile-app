@@ -154,7 +154,7 @@ class _SplashScreenState extends State<SplashScreen>
             const SizedBox(height: 60),
 
             // Loading Indicator
-            SizedBox(
+            const SizedBox(
               width: 40,
               height: 40,
               child: WaveformAnimation(isActive: true, amplitude: 0.7, color: AppConstants.primaryTeal, height: 24, waveCount: 7, duration: Duration(milliseconds: 1200),),
