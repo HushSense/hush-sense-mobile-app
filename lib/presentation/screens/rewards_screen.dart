@@ -148,7 +148,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
         ),
         const SizedBox(height: 8),
         Text(
-          'Your contribution to the sound map is rewarded',
+          'Your contribution to the noise map is rewarded',
           style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
         ),
       ],

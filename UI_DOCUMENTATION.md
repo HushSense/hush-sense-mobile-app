@@ -184,6 +184,205 @@ This document tracks all UI components and screens built for HushSense to preven
   - Implemented theme-adaptive UI
   - Gradient cards with proper elevation
   - Improved typography hierarchy
+Let me help you understand the HushSense app's user flow and purpose:
+
+## HushSense User Journey
+
+### 1. First Launch Experience
+- **Splash Screen**: Branding and initial loading
+- **Onboarding**: Quick introduction to the app's purpose and features
+- **Permissions**: Location and microphone access requests
+
+### 2. Core App Flow
+- **Home Screen**
+  - Dashboard with personal stats
+  - Quick actions for common tasks
+  - Recent activity feed
+
+- **Map Screen**
+  - View noise levels around you
+  - See your current location (blue dot)
+  - Check nearby venues with noise data
+  - Tap markers for detailed information
+
+- **Measure Screen**
+  - Take real-time noise measurements
+  - See visual feedback (waveform, decibel levels)
+  - Save/share measurements
+  - Check into venues
+
+- **Rewards Screen**
+  - Track earned $HUSH tokens
+  - View achievements
+  - See leaderboard position
+  - Claim rewards
+
+- **Profile Screen**
+  - Account settings
+  - Privacy controls
+  - Data export options
+  - App preferences
+
+### 3. Key User Actions
+- **Contribute Data**:
+  1. Open Measure screen
+  2. Hold to record noise
+  3. View real-time analysis
+  4. Save or share results
+
+- **Earn Rewards**:
+  1. Complete measurements
+  2. Visit new locations
+  3. Maintain consistent contributions
+  4. Claim $HUSH tokens
+
+- **Explore Data**:
+  1. Use the Map screen
+  2. Filter by time/date
+  3. Check venue details
+  4. Compare noise levels
+
+### Why This Matters
+1. **For Users**:
+   - Understand local noise pollution
+   - Earn crypto rewards
+   - Contribute to community data
+   - Make informed decisions about places to visit
+
+2. **For the Community**:
+   - Build comprehensive noise maps
+   - Identify problem areas
+   - Drive urban planning decisions
+   - Create quieter, healthier cities
+
+3. **For Businesses**:
+   - Access to noise analytics
+   - Improve customer experience
+   - Demonstrate noise compliance
+   - Make data-driven decisions
+I'll analyze the requirements and create a comprehensive plan for the integrations and setups needed to make HushSense "lively" and active. Let's break this down into key components:
+
+## Core Integrations Needed
+
+### 1. Map & Location Services
+- **Mapbox/Google Maps Integration**
+  - API key setup
+  - Custom map styling
+  - Heatmap layer for noise visualization
+  - Marker clustering for dense areas
+
+### 2. Sound Measurement
+- **Audio Processing**
+  - Microphone access handling
+  - Real-time FFT analysis
+  - dB level calculation
+  - Background measurement capability
+
+### 3. Backend Services
+- **Firebase Setup**
+  - Authentication
+  - Firestore for user data
+  - Cloud Functions for serverless operations
+  - Storage for audio samples (if needed)
+
+### 4. Blockchain Integration
+- **Hedera Network**
+  - Wallet creation/management
+  - Smart contract interactions
+  - $HUSH token distribution
+  - Transaction signing
+
+## Feature-Specific Setups
+
+### A. Passive Mode
+1. Background service setup
+2. Battery optimization
+3. Geofencing for location-based triggers
+4. Periodic sync with backend
+
+### B. Venue Check-in
+1. Places API integration
+   - Venue search
+   - Place details
+   - Auto-suggestions
+2. Check-in validation
+   - Location verification
+   - Time-based cooldowns
+
+### C. User Engagement
+1. Push Notifications
+   - Achievement unlocks
+   - Reward milestones
+   - Nearby interesting locations
+2. Gamification
+   - Badge system
+   - Leaderboards
+   - Daily/weekly challenges
+
+### D. Data Visualization
+1. Real-time heatmap updates
+2. Historical data charts
+3. Noise trends over time
+4. Comparative analysis tools
+
+## Technical Dependencies
+
+```yaml
+dependencies:
+  # Maps
+  google_maps_flutter: ^2.5.0
+  location: ^5.0.0
+  geolocator: ^10.0.0
+  
+  # Audio
+  sound_meter: ^1.0.0
+  record: ^5.0.0
+  
+  # Backend
+  firebase_core: ^2.15.1
+  firebase_auth: ^4.9.0
+  cloud_firestore: ^4.9.0
+  firebase_messaging: ^14.6.6
+  
+  # Blockchain
+  hedera_sdk: ^2.0.0
+  web3dart: ^2.4.0
+  
+  # State Management
+  flutter_riverpod: ^2.3.6
+  riverpod_annotation: ^2.1.1
+  
+  # UI
+  flutter_svg: ^2.0.7
+  lottie: ^2.6.0
+  shimmer: ^3.0.0
+```
+
+## Development Phases
+
+### Phase 1: Core Functionality
+1. Set up Firebase project
+2. Implement basic sound measurement
+3. Basic map integration
+4. User authentication
+
+### Phase 2: Core Features
+1. Venue check-in system
+2. Basic rewards system
+3. Data visualization
+4. User profiles
+
+### Phase 3: Engagement
+1. Passive mode
+2. Push notifications
+3. Gamification elements
+4. Social features
+
+### Phase 4: Polish & Scale
+1. Performance optimization
+2. Advanced analytics
+3. Admin dashboard
+4. Multi-language support
 
 ## Last Updated
 2025-09-13 - Added theming, map features, and UI updates
