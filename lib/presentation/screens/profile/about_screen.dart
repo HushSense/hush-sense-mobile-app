@@ -81,12 +81,12 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back,
             color: AppConstants.textPrimary,
           ),
         ),
-        title: Text(
+        title: const Text(
           'About HushSense',
           style: TextStyle(
             color: AppConstants.textPrimary,
@@ -146,7 +146,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
@@ -172,7 +172,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
           const SizedBox(height: AppConstants.paddingM),
           
           // App Name and Version
-          Text(
+          const Text(
             'HushSense',
             style: TextStyle(
               fontSize: 28,
@@ -182,8 +182,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            'Decentralized Urban Sound Mapping',
+          const Text(
+            'Decentralized Urban Noise Mapping',
             style: TextStyle(
               fontSize: 16,
               color: AppConstants.textSecondary,
@@ -199,7 +199,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
               color: Colors.white.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Text(
+            child: const Text(
               'HushSense empowers communities to map urban soundscapes through crowdsourced data collection, creating quieter, healthier cities while rewarding contributors with \$HUSH tokens.',
               style: TextStyle(
                 fontSize: 14,
@@ -317,7 +317,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: AppConstants.textPrimary,
@@ -342,7 +342,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
                 children: [
                   item,
                   if (index < items.length - 1)
-                    Divider(
+                    const Divider(
                       height: 1,
                       color: AppConstants.borderColor,
                       indent: 56,
@@ -364,7 +364,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        title: Text(
+        title: const Text(
           'Check for Updates',
           style: TextStyle(
             fontWeight: FontWeight.w600,
@@ -372,7 +372,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
             fontFamily: 'Funnel Sans',
           ),
         ),
-        content: Column(
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
@@ -380,7 +380,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
               color: AppConstants.primaryTeal,
               size: 48,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               'You have the latest version of HushSense!',
               style: TextStyle(
@@ -401,7 +401,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Text(
+            child: const Text(
               'OK',
               style: TextStyle(
                 fontFamily: 'Funnel Sans',
@@ -422,9 +422,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.8,
         padding: const EdgeInsets.all(AppConstants.paddingL),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppConstants.cardBackground,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           children: [
@@ -437,7 +437,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
               ),
             ),
             const SizedBox(height: AppConstants.paddingL),
-            Text(
+            const Text(
               'Release Notes',
               style: TextStyle(
                 fontSize: 20,
@@ -493,7 +493,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
             children: [
               Text(
                 'Version $version',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: AppConstants.textPrimary,
@@ -503,7 +503,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
               const Spacer(),
               Text(
                 date,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: AppConstants.textSecondary,
                   fontFamily: 'Funnel Sans',
@@ -516,7 +516,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
               feature,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 color: AppConstants.textPrimary,
                 fontFamily: 'Funnel Sans',
@@ -536,7 +536,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        title: Text(
+        title: const Text(
           'Report a Bug',
           style: TextStyle(
             fontWeight: FontWeight.w600,
@@ -571,7 +571,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
+            child: const Text(
               'Cancel',
               style: TextStyle(
                 color: AppConstants.textSecondary,
@@ -591,7 +591,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Text(
+            child: const Text(
               'Submit',
               style: TextStyle(
                 fontFamily: 'Funnel Sans',
@@ -626,7 +626,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen>
       SnackBar(
         content: Text(
           'Opening $url...',
-          style: TextStyle(fontFamily: 'Funnel Sans'),
+          style: const TextStyle(fontFamily: 'Funnel Sans'),
         ),
         backgroundColor: AppConstants.primaryTeal,
         behavior: SnackBarBehavior.floating,
