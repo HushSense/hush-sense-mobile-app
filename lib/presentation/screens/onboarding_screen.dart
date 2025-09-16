@@ -118,7 +118,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    // final colorScheme = theme.colorScheme;
 
     return Scaffold(
       backgroundColor: AppConstants.surfaceColor,
@@ -229,13 +229,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   // Next/Get Started Button
                   Expanded(
                     flex: _currentPage > 0 ? 1 : 1,
-                    child: Container(
-                      child: PremiumButton(
-                        text: _currentPage == _pages.length - 1 ? 'Get Started' : 'Next',
-                        onPressed: _nextPage,
-                        style: PremiumButtonStyle.primary,
-                        isExpanded: true,
-                      ),
+                    child: PremiumButton(
+                      text: _currentPage == _pages.length - 1 ? 'Get Started' : 'Next',
+                      onPressed: _nextPage,
+                      style: PremiumButtonStyle.primary,
+                      isExpanded: true,
                     ),
                   ),
                 ],
@@ -278,15 +276,15 @@ class _OnboardingPageWidget extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  page.color.withOpacity(0.1),
-                  page.color.withOpacity(0.05),
+                  page.color.withValues(alpha: 0.1),
+                  page.color.withValues(alpha: 0.05),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: page.color.withOpacity(0.2),
+                  color: page.color.withValues(alpha: 0.2),
                   blurRadius: 30,
                   offset: const Offset(0, 10),
                 ),
@@ -359,9 +357,9 @@ class _OnboardingPageWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 gradient: LinearGradient(
                   colors: [
-                    page.color.withOpacity(0.0),
-                    page.color.withOpacity(0.25),
-                    page.color.withOpacity(0.0),
+                    page.color.withValues(alpha: 0.0),
+                    page.color.withValues(alpha: 0.25),
+                    page.color.withValues(alpha: 0.0),
                   ],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
@@ -412,12 +410,12 @@ class _PageIndicator extends StatelessWidget {
       width: isActive ? 32 : 8,
       height: 8,
       decoration: BoxDecoration(
-        color: isActive ? color : AppConstants.textTertiary.withOpacity(0.3),
+        color: isActive ? color : AppConstants.textTertiary.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(AppConstants.radiusS),
         boxShadow: isActive
             ? [
                 BoxShadow(
-                  color: color.withOpacity(0.4),
+                  color: color.withValues(alpha: 0.4),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
