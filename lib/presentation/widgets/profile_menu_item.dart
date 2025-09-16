@@ -51,7 +51,7 @@ class ProfileMenuItem extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: AppConstants.textPrimary,
@@ -61,7 +61,7 @@ class ProfileMenuItem extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
                         color: AppConstants.textSecondary,
                         fontFamily: 'Funnel Sans',
@@ -70,7 +70,7 @@ class ProfileMenuItem extends StatelessWidget {
                   ],
                 ),
               ),
-              trailing ?? Icon(
+              trailing ?? const Icon(
                 Icons.chevron_right,
                 color: AppConstants.textSecondary,
                 size: 20,

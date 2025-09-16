@@ -15,9 +15,9 @@ class WalletSettingsScreen extends ConsumerWidget {
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back, color: AppConstants.textPrimary),
+          icon: const Icon(Icons.arrow_back, color: AppConstants.textPrimary),
         ),
-        title: Text(
+        title: const Text(
           'Wallet Settings',
           style: TextStyle(
             color: AppConstants.textPrimary,
@@ -31,7 +31,7 @@ class WalletSettingsScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Manage your HUSH wallet, connect accounts, and view blockchain details.',
               style: TextStyle(
                 color: AppConstants.textSecondary,
@@ -42,33 +42,33 @@ class WalletSettingsScreen extends ConsumerWidget {
             _buildWalletCard(),
             const SizedBox(height: AppConstants.paddingL),
             ListTile(
-              leading: Icon(Icons.key, color: AppConstants.primaryTeal),
-              title: Text('Export Private Key', style: TextStyle(fontFamily: 'Funnel Sans')),
-              subtitle: Text('Backup your wallet key securely', style: TextStyle(fontFamily: 'Funnel Sans')),
+              leading: const Icon(Icons.key, color: AppConstants.primaryTeal),
+              title: const Text('Export Private Key', style: TextStyle(fontFamily: 'Funnel Sans')),
+              subtitle: const Text('Backup your wallet key securely', style: TextStyle(fontFamily: 'Funnel Sans')),
               onTap: () {
                 // TODO: Export private key
               },
             ),
             ListTile(
-              leading: Icon(Icons.link, color: AppConstants.primaryTeal),
-              title: Text('Connect External Wallet', style: TextStyle(fontFamily: 'Funnel Sans')),
-              subtitle: Text('Link MetaMask, Ledger, or other', style: TextStyle(fontFamily: 'Funnel Sans')),
+              leading: const Icon(Icons.link, color: AppConstants.primaryTeal),
+              title: const Text('Connect External Wallet', style: TextStyle(fontFamily: 'Funnel Sans')),
+              subtitle: const Text('Link MetaMask, Ledger, or other', style: TextStyle(fontFamily: 'Funnel Sans')),
               onTap: () {
                 // TODO: Connect external wallet
               },
             ),
             ListTile(
-              leading: Icon(Icons.security, color: AppConstants.primaryTeal),
-              title: Text('Wallet Security', style: TextStyle(fontFamily: 'Funnel Sans')),
-              subtitle: Text('Set up PIN, biometrics, or 2FA', style: TextStyle(fontFamily: 'Funnel Sans')),
+              leading: const Icon(Icons.security, color: AppConstants.primaryTeal),
+              title: const Text('Wallet Security', style: TextStyle(fontFamily: 'Funnel Sans')),
+              subtitle: const Text('Set up PIN, biometrics, or 2FA', style: TextStyle(fontFamily: 'Funnel Sans')),
               onTap: () {
                 // TODO: Wallet security settings
               },
             ),
             ListTile(
-              leading: Icon(Icons.history, color: AppConstants.primaryTeal),
-              title: Text('Transaction History', style: TextStyle(fontFamily: 'Funnel Sans')),
-              subtitle: Text('See all blockchain transactions', style: TextStyle(fontFamily: 'Funnel Sans')),
+              leading: const Icon(Icons.history, color: AppConstants.primaryTeal),
+              title: const Text('Transaction History', style: TextStyle(fontFamily: 'Funnel Sans')),
+              subtitle: const Text('See all blockchain transactions', style: TextStyle(fontFamily: 'Funnel Sans')),
               onTap: () {
                 // TODO: Show transaction history
               },
@@ -84,7 +84,7 @@ class WalletSettingsScreen extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppConstants.paddingL),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
@@ -107,7 +107,7 @@ class WalletSettingsScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Wallet Balance',
                 style: TextStyle(
                   fontSize: 18,
@@ -128,13 +128,13 @@ class WalletSettingsScreen extends ConsumerWidget {
                     Container(
                       width: 8,
                       height: 8,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: AppConstants.accentGold,
                         shape: BoxShape.circle,
                       ),
                     ),
                     const SizedBox(width: 6),
-                    Text(
+                    const Text(
                       'Connected',
                       style: TextStyle(
                         fontSize: 12,
@@ -149,7 +149,7 @@ class WalletSettingsScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: AppConstants.paddingL),
-          Text(
+          const Text(
             '2,847',
             style: TextStyle(
               fontSize: 36,

@@ -87,12 +87,12 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back,
             color: AppConstants.textPrimary,
           ),
         ),
-        title: Text(
+        title: const Text(
           'Privacy & Security',
           style: TextStyle(
             color: AppConstants.textPrimary,
@@ -157,14 +157,14 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
                   color: AppConstants.primaryTeal.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.security,
                   color: AppConstants.primaryTeal,
                   size: 24,
                 ),
               ),
               const SizedBox(width: AppConstants.paddingM),
-              Expanded(
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -177,7 +177,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
                         fontFamily: 'Funnel Sans',
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       'HushSense is built with privacy-first principles',
                       style: TextStyle(
@@ -202,14 +202,14 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
                 width: 1,
               ),
             ),
-            child: Row(
+            child: const Row(
               children: [
                 Icon(
                   Icons.info_outline,
                   color: AppConstants.accentGold,
                   size: 20,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'All data is encrypted and stored securely on the blockchain',
@@ -317,7 +317,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
               color: AppConstants.accentGold.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Text(
+            child: const Text(
               'Recommended',
               style: TextStyle(
                 fontSize: 12,
@@ -351,7 +351,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: AppConstants.textPrimary,
@@ -376,7 +376,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
                 children: [
                   item,
                   if (index < items.length - 1)
-                    Divider(
+                    const Divider(
                       height: 1,
                       color: AppConstants.borderColor,
                       indent: 56,
@@ -422,7 +422,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: AppConstants.textPrimary,
@@ -432,7 +432,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: AppConstants.textSecondary,
                     fontFamily: 'Funnel Sans',
@@ -458,9 +458,9 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         padding: const EdgeInsets.all(AppConstants.paddingL),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppConstants.cardBackground,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -474,7 +474,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
               ),
             ),
             const SizedBox(height: AppConstants.paddingL),
-            Text(
+            const Text(
               'Data Retention Period',
               style: TextStyle(
                 fontSize: 20,
@@ -493,12 +493,12 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
             ].map((period) => ListTile(
               title: Text(
                 period,
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppConstants.textPrimary,
                   fontFamily: 'Funnel Sans',
                 ),
               ),
-              trailing: _dataRetention == period ? Icon(Icons.check, color: AppConstants.primaryTeal) : null,
+              trailing: _dataRetention == period ? const Icon(Icons.check, color: AppConstants.primaryTeal) : null,
               onTap: () {
                 setState(() => _dataRetention = period);
                 Navigator.pop(context);
@@ -519,7 +519,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        title: Text(
+        title: const Text(
           'Download Your Data',
           style: TextStyle(
             fontWeight: FontWeight.w600,
@@ -527,7 +527,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
             fontFamily: 'Funnel Sans',
           ),
         ),
-        content: Text(
+        content: const Text(
           'We\'ll prepare a download package with all your data. This may take a few minutes.',
           style: TextStyle(
             color: AppConstants.textSecondary,
@@ -537,7 +537,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
+            child: const Text(
               'Cancel',
               style: TextStyle(
                 color: AppConstants.textSecondary,
@@ -557,7 +557,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Text(
+            child: const Text(
               'Download',
               style: TextStyle(
                 fontFamily: 'Funnel Sans',
@@ -578,7 +578,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        title: Text(
+        title: const Text(
           'Change Password',
           style: TextStyle(
             fontWeight: FontWeight.w600,
@@ -623,7 +623,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
+            child: const Text(
               'Cancel',
               style: TextStyle(
                 color: AppConstants.textSecondary,
@@ -643,7 +643,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Text(
+            child: const Text(
               'Update',
               style: TextStyle(
                 fontFamily: 'Funnel Sans',

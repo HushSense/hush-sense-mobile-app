@@ -49,7 +49,7 @@ class StatsCard extends StatelessWidget {
               const Spacer(),
               Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: AppConstants.textSecondary,
@@ -61,7 +61,7 @@ class StatsCard extends StatelessWidget {
           const SizedBox(height: AppConstants.paddingM),
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: AppConstants.textPrimary,
@@ -71,7 +71,7 @@ class StatsCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 12,
               color: AppConstants.textSecondary,
               fontFamily: 'Funnel Sans',

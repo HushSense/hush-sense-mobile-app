@@ -146,7 +146,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     ),
                     const SizedBox(height: 6),
                     ShaderMask(
-                      shaderCallback: (bounds) => LinearGradient(
+                      shaderCallback: (bounds) => const LinearGradient(
                         colors: [
                           AppConstants.primaryTeal,
                           AppConstants.primaryColor,
@@ -168,7 +168,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
@@ -210,7 +210,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
+                const Icon(
                   Icons.location_on,
                   color: AppConstants.accentGold,
                   size: 16,
@@ -233,7 +233,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   Widget _buildStatsSection() {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -245,7 +245,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             fontFamily: 'Funnel Sans',
           ),
         ),
-        const SizedBox(height: AppConstants.paddingM),
+        SizedBox(height: AppConstants.paddingM),
         Row(
           children: [
             Expanded(
@@ -257,7 +257,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 color: AppConstants.primaryTeal,
               ),
             ),
-            const SizedBox(width: AppConstants.paddingM),
+            SizedBox(width: AppConstants.paddingM),
             Expanded(
               child: StatsCard(
                 title: '\$HUSH Earned',
@@ -269,7 +269,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
           ],
         ),
-        const SizedBox(height: AppConstants.paddingM),
+        SizedBox(height: AppConstants.paddingM),
         Row(
           children: [
             Expanded(
@@ -281,7 +281,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 color: AppConstants.accentOrange,
               ),
             ),
-            const SizedBox(width: AppConstants.paddingM),
+            SizedBox(width: AppConstants.paddingM),
             Expanded(
               child: StatsCard(
                 title: 'Rank',
@@ -301,7 +301,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Quick Actions',
           style: TextStyle(
             fontSize: 20,
@@ -360,7 +360,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Recent Activity',
               style: TextStyle(
                 fontSize: 20,
@@ -373,7 +373,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               onPressed: () {
                 // TODO: Navigate to activity history screen
               },
-              child: Text(
+              child: const Text(
                 'View All',
                 style: TextStyle(
                   color: AppConstants.primaryTeal,
@@ -440,7 +440,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: AppConstants.textPrimary,
@@ -450,7 +450,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: AppConstants.textSecondary,
                     fontFamily: 'Funnel Sans',

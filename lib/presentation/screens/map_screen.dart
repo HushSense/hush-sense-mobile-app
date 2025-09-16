@@ -18,7 +18,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
   GoogleMapController? _mapController;
-  LatLng? _userLatLng;
+  // LatLng? _userLatLng;
   Marker? _userMarker;
   
   static const CameraPosition _initialPosition = CameraPosition(
@@ -110,7 +110,10 @@ class _MapScreenState extends ConsumerState<MapScreen>
       }
 
       final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          // timeLimit: Duration(seconds: 10),
+        ),
       );
 
       if (!mounted) return;
@@ -124,7 +127,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
       );
 
       setState(() {
-        _userLatLng = userLatLng;
+        // _userLatLng = userLatLng;
         _userMarker = userMarker;
       });
 
@@ -367,7 +370,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
                       color: AppConstants.primaryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Tap to measure',
                       style: TextStyle(
                         fontSize: 12,

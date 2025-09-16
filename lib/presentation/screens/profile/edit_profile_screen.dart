@@ -70,12 +70,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back,
             color: AppConstants.textPrimary,
           ),
         ),
-        title: Text(
+        title: const Text(
           'Edit Profile',
           style: TextStyle(
             color: AppConstants.textPrimary,
@@ -86,7 +86,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
         actions: [
           TextButton(
             onPressed: _saveProfile,
-            child: Text(
+            child: const Text(
               'Save',
               style: TextStyle(
                 color: AppConstants.primaryTeal,
@@ -142,7 +142,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
@@ -196,7 +196,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
             ],
           ),
           const SizedBox(height: AppConstants.paddingM),
-          Text(
+          const Text(
             'Tap to change profile picture',
             style: TextStyle(
               fontSize: 14,
@@ -297,7 +297,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: AppConstants.textPrimary,
@@ -343,18 +343,18 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
         hintText: hint,
         prefixIcon: Icon(icon, color: AppConstants.primaryTeal),
         prefixText: prefix,
-        suffixIcon: readOnly ? Icon(Icons.chevron_right, color: AppConstants.textSecondary) : null,
+        suffixIcon: readOnly ? const Icon(Icons.chevron_right, color: AppConstants.textSecondary) : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppConstants.borderColor),
+          borderSide: const BorderSide(color: AppConstants.borderColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppConstants.borderColor),
+          borderSide: const BorderSide(color: AppConstants.borderColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppConstants.primaryTeal, width: 2),
+          borderSide: const BorderSide(color: AppConstants.primaryTeal, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -362,7 +362,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
         ),
         filled: true,
         fillColor: AppConstants.backgroundColor,
-        labelStyle: TextStyle(
+        labelStyle: const TextStyle(
           color: AppConstants.textSecondary,
           fontFamily: 'Funnel Sans',
         ),
@@ -371,7 +371,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
           fontFamily: 'Funnel Sans',
         ),
       ),
-      style: TextStyle(
+      style: const TextStyle(
         color: AppConstants.textPrimary,
         fontFamily: 'Funnel Sans',
       ),
@@ -390,9 +390,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         padding: const EdgeInsets.all(AppConstants.paddingL),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppConstants.cardBackground,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -406,7 +406,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
               ),
             ),
             const SizedBox(height: AppConstants.paddingL),
-            Text(
+            const Text(
               'Change Profile Picture',
               style: TextStyle(
                 fontSize: 20,
@@ -461,7 +461,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
           const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: AppConstants.textPrimary,
@@ -481,9 +481,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.7,
         padding: const EdgeInsets.all(AppConstants.paddingL),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppConstants.cardBackground,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           children: [
@@ -496,7 +496,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
               ),
             ),
             const SizedBox(height: AppConstants.paddingL),
-            Text(
+            const Text(
               'Select Location',
               style: TextStyle(
                 fontSize: 20,
@@ -509,10 +509,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
             TextField(
               decoration: InputDecoration(
                 hintText: 'Search for a city...',
-                prefixIcon: Icon(Icons.search, color: AppConstants.primaryTeal),
+                prefixIcon: const Icon(Icons.search, color: AppConstants.primaryTeal),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: AppConstants.borderColor),
+                  borderSide: const BorderSide(color: AppConstants.borderColor),
                 ),
                 filled: true,
                 fillColor: AppConstants.backgroundColor,
@@ -552,7 +552,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
           fontFamily: 'Funnel Sans',
         ),
       ),
-      trailing: isSelected ? Icon(Icons.check, color: AppConstants.primaryTeal) : null,
+      trailing: isSelected ? const Icon(Icons.check, color: AppConstants.primaryTeal) : null,
       onTap: () {
         _locationController.text = location;
         Navigator.pop(context);
@@ -565,7 +565,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
       // TODO: Save profile data
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
+          content: const Text(
             'Profile updated successfully!',
             style: TextStyle(fontFamily: 'Funnel Sans'),
           ),

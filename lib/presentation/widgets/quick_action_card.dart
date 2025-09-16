@@ -59,7 +59,7 @@ class QuickActionCard extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                             color: AppConstants.textPrimary,
@@ -69,7 +69,7 @@ class QuickActionCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           subtitle,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
                             color: AppConstants.textSecondary,
                             fontFamily: 'Funnel Sans',
@@ -104,7 +104,7 @@ class QuickActionCard extends StatelessWidget {
                   const SizedBox(height: AppConstants.paddingM),
                   Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: AppConstants.textPrimary,
@@ -114,7 +114,7 @@ class QuickActionCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppConstants.textSecondary,
                       fontFamily: 'Funnel Sans',

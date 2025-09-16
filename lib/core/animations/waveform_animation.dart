@@ -141,7 +141,7 @@ class _WaveformAnimationState extends State<WaveformAnimation>
                         height: height,
                         margin: EdgeInsets.symmetric(horizontal: space),
                         decoration: BoxDecoration(
-                          color: widget.color.withOpacity(
+                          color: widget.color.withValues(alpha: 
                             widget.isActive ? 0.8 : 0.3,
                           ),
                           borderRadius: BorderRadius.circular(2),
@@ -349,9 +349,7 @@ class _RippleEffectState extends State<RippleEffect>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: widget.color.withOpacity(
-                        widget.isActive ? opacity * 0.3 : 0.0,
-                      ),
+                      color: widget.color.withValues(alpha: widget.isActive ? opacity * 0.3 : 0.0),
                       width: 2,
                     ),
                   ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:ui' show FontVariation;
 import '../constants/app_constants.dart';
 
 class AppTheme {
@@ -77,7 +76,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(16),
         ),
         color: AppConstants.pureWhite,
-        shadowColor: AppConstants.deepBlue.withOpacity(0.08),
+        shadowColor: AppConstants.deepBlue.withValues(alpha: 0.08),
       ),
 
       // Elevated Button Theme - Teal Primary
@@ -418,7 +417,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(16),
         ),
         color: AppConstants.darkSurface,
-        shadowColor: Colors.black.withOpacity(0.3),
+        shadowColor: Colors.black.withValues(alpha: 0.3),
       ),
 
       // Complete dark theme button styles
