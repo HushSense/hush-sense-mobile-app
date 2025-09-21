@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:typed_data';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:mic_stream/mic_stream.dart';
 import '../constants/app_constants.dart';
 
 class AudioService {
@@ -10,6 +12,7 @@ class AudioService {
 
   Timer? _measurementTimer;
   StreamController<double>? _audioStreamController;
+  StreamSubscription<Uint8List>? _micSubscription;
   bool _isMeasuring = false;
 
   /// Check microphone permission
@@ -33,9 +36,73 @@ class AudioService {
     _audioStreamController = StreamController<double>();
     _isMeasuring = true;
 
-    // Simulate real-time audio measurement
-    // In a real implementation, this would use platform channels
-    // to access the device's microphone and perform FFT analysis
+    try {
+      // Start real microphone stream
+      final micStream = MicStream.microphone(
+        audioSource: AudioSource.MIC,
+        sampleRate: 44100,
+        channelConfig: ChannelConfig.CHANNEL_IN_MONO,
+        audioFormat: AudioFormat.ENCODING_PCM_16BIT,
+      );
+
+      _micSubscription = micStream.listen(
+        (Uint8List audioData) {
+          if (_isMeasuring && _audioStreamController != null) {
+            // Convert audio data to decibel level
+            double decibelLevel = _calculateDecibelLevel(audioData);
+            _audioStreamController!.add(decibelLevel);
+          }
+        },
+        onError: (error) {
+          if (_audioStreamController != null &&
+              !_audioStreamController!.isClosed) {
+            _audioStreamController!.addError(error);
+          }
+        },
+      );
+    } catch (e) {
+      // Fallback to simulation if real audio fails
+      _startSimulationMode();
+    }
+
+    return _audioStreamController!.stream;
+  }
+
+  /// Calculate decibel level from audio data
+  double _calculateDecibelLevel(Uint8List audioData) {
+    if (audioData.isEmpty) return AppConstants.minDecibelLevel;
+
+    // Convert bytes to 16-bit signed integers
+    final samples = <int>[];
+    for (int i = 0; i < audioData.length - 1; i += 2) {
+      final sample = (audioData[i + 1] << 8) | audioData[i];
+      samples.add(sample > 32767 ? sample - 65536 : sample);
+    }
+
+    if (samples.isEmpty) return AppConstants.minDecibelLevel;
+
+    // Calculate RMS (Root Mean Square)
+    double sum = 0;
+    for (int sample in samples) {
+      sum += sample * sample;
+    }
+    double rms = math.sqrt(sum / samples.length);
+
+    // Convert to decibels (with some calibration)
+    double decibelLevel = 20 * math.log(rms / 32768) / math.ln10;
+
+    // Add reference level (typical smartphone microphone sensitivity)
+    decibelLevel += 94; // dB SPL reference
+
+    // Clamp to reasonable range
+    return decibelLevel.clamp(
+      AppConstants.minDecibelLevel,
+      AppConstants.maxDecibelLevel,
+    );
+  }
+
+  /// Fallback simulation mode
+  void _startSimulationMode() {
     _measurementTimer = Timer.periodic(
       const Duration(milliseconds: 100),
       (timer) {
@@ -56,8 +123,6 @@ class AudioService {
         }
       },
     );
-
-    return _audioStreamController!.stream;
   }
 
   /// Stop audio measurement
@@ -65,6 +130,9 @@ class AudioService {
     _isMeasuring = false;
     _measurementTimer?.cancel();
     _measurementTimer = null;
+
+    await _micSubscription?.cancel();
+    _micSubscription = null;
 
     await _audioStreamController?.close();
     _audioStreamController = null;
@@ -137,5 +205,3 @@ class AudioServiceException implements Exception {
   @override
   String toString() => 'AudioServiceException: $message';
 }
-
-

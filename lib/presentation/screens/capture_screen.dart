@@ -9,6 +9,8 @@ import '../../core/utils/haptic_feedback.dart';
 import '../widgets/noise_measurement_modal.dart';
 import '../../domain/models/noise_measurement.dart';
 import '../../domain/models/venue.dart';
+import 'history_screen.dart';
+import 'analytics_screen.dart';
 
 class MeasureScreen extends ConsumerStatefulWidget {
   const MeasureScreen({super.key});
@@ -558,14 +560,19 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
       _rippleController.repeat();
       _waveformController.repeat();
 
-      // Show success feedback
+      // Update UI state to show measuring
+      setState(() {
+        // UI will automatically update based on measurementState.isMeasuring
+      });
+
+      // Show brief success feedback
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(_getMeasurementTypeDescription(_selectedMeasurementType!)),
+            content: Text(
+                'Measuring ${_getMeasurementTypeDescription(_selectedMeasurementType!)}'),
             backgroundColor: AppConstants.primaryTeal,
-            duration: const Duration(seconds: 2),
+            duration: const Duration(seconds: 1),
           ),
         );
       }
@@ -701,21 +708,19 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
   }
 
   void _showHistoryScreen() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('History screen - Coming soon!'),
-        backgroundColor: AppConstants.primaryTeal,
-        duration: Duration(seconds: 2),
+    // Navigate to history screen
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const HistoryScreen(),
       ),
     );
   }
 
   void _showAnalyticsScreen() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Analytics screen - Coming soon!'),
-        backgroundColor: AppConstants.primaryTeal,
-        duration: Duration(seconds: 2),
+    // Navigate to analytics screen
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const AnalyticsScreen(),
       ),
     );
   }

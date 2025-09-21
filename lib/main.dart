@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'core/constants/app_constants.dart';
 import 'core/theme/app_theme.dart';
 import 'presentation/screens/splash_screen.dart';
+import 'domain/models/noise_measurement.dart';
+import 'domain/models/user_profile.dart';
+import 'domain/models/venue.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,11 +23,21 @@ void main() async {
 
   // Initialize Hive with error handling
   try {
-    // Note: Hive initialization is commented out for now to avoid initialization issues
-    // await Hive.initFlutter();
-    // await Hive.openBox('noise_measurements');
-    // await Hive.openBox('user_profiles');
-    // await Hive.openBox('venues');
+    await Hive.initFlutter();
+
+    // Register adapters
+    Hive.registerAdapter(NoiseMeasurementAdapter());
+    Hive.registerAdapter(MeasurementTypeAdapter());
+    Hive.registerAdapter(MeasurementStatusAdapter());
+    Hive.registerAdapter(NoiseLevelAdapter());
+    Hive.registerAdapter(UserProfileAdapter());
+    Hive.registerAdapter(VenueAdapter());
+    Hive.registerAdapter(VenueTypeAdapter());
+
+    // Open boxes
+    await Hive.openBox<NoiseMeasurement>('noise_measurements');
+    await Hive.openBox<UserProfile>('user_profiles');
+    await Hive.openBox<Venue>('venues');
   } catch (e) {
     debugPrint('Hive initialization failed: $e');
   }
