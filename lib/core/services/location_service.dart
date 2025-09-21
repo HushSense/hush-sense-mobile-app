@@ -1,4 +1,5 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import '../constants/app_constants.dart';
 
 class LocationService {
@@ -82,17 +83,45 @@ class LocationService {
     }
   }
 
-  /// Get address from coordinates (simplified for now)
+  /// Get address from coordinates using real geocoding
   Future<String> _getAddressFromCoordinates(
     double latitude,
     double longitude,
   ) async {
     try {
-      // For now, return formatted coordinates
-      // In a real app, you would use geocoding service
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        latitude,
+        longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        final placemark = placemarks.first;
+        List<String> addressParts = [];
+
+        if (placemark.street != null && placemark.street!.isNotEmpty) {
+          addressParts.add(placemark.street!);
+        }
+        if (placemark.locality != null && placemark.locality!.isNotEmpty) {
+          addressParts.add(placemark.locality!);
+        }
+        if (placemark.administrativeArea != null &&
+            placemark.administrativeArea!.isNotEmpty) {
+          addressParts.add(placemark.administrativeArea!);
+        }
+        if (placemark.country != null && placemark.country!.isNotEmpty) {
+          addressParts.add(placemark.country!);
+        }
+
+        if (addressParts.isNotEmpty) {
+          return addressParts.join(', ');
+        }
+      }
+
+      // Fallback to coordinates if geocoding fails
       return 'Location: ${latitude.toStringAsFixed(4)}, ${longitude.toStringAsFixed(4)}';
     } catch (e) {
-      return 'Unknown location';
+      // Fallback to coordinates if geocoding fails
+      return 'Location: ${latitude.toStringAsFixed(4)}, ${longitude.toStringAsFixed(4)}';
     }
   }
 
