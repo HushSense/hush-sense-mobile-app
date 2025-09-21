@@ -6,6 +6,9 @@ import '../providers/app_providers.dart';
 import '../../core/animations/waveform_animation.dart';
 import '../../core/widgets/premium_button.dart';
 import '../../core/utils/haptic_feedback.dart';
+import '../widgets/noise_measurement_modal.dart';
+import '../../domain/models/noise_measurement.dart';
+import '../../domain/models/venue.dart';
 
 class MeasureScreen extends ConsumerStatefulWidget {
   const MeasureScreen({super.key});
@@ -20,6 +23,9 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
   late AnimationController _rippleController;
   late AnimationController _waveformController;
   late AnimationController _breathingController;
+
+  NoiseMeasurementType? _selectedMeasurementType;
+  Venue? _selectedVenue;
 
   @override
   void initState() {
@@ -40,9 +46,14 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
       duration: const Duration(milliseconds: 3000),
       vsync: this,
     );
-    
+
     // Start subtle breathing animation
     _breathingController.repeat(reverse: true);
+
+    // Get current location on init
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(locationProvider.notifier).getCurrentLocation();
+    });
   }
 
   @override
@@ -69,35 +80,35 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                
+
                 // Header
                 _buildHeader(),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Location Card
                 _buildLocationCard(locationState),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Main Measurement Circle with Dynamic Visualization
                 _buildMeasurementCircle(measurementState),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Decibel Display
                 _buildDecibelDisplay(measurementState),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Control Buttons
                 _buildControlButtons(measurementState),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Quick Actions
                 _buildQuickActions(),
-                
+
                 const SizedBox(height: 20),
               ],
             ),
@@ -248,14 +259,14 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
                 );
               },
             ),
-            
+
             // Dynamic ripple circles when measuring
             if (measurementState.isMeasuring) ...[
               _buildRippleCircle(280, 0.1),
               _buildRippleCircle(240, 0.2),
               _buildRippleCircle(200, 0.3),
             ],
-            
+
             // Main measurement circle with premium styling
             AnimatedBuilder(
               animation: _breathingController,
@@ -311,7 +322,7 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
       ),
     );
   }
-  
+
   Widget _buildDynamicWaveform(MeasurementState measurementState) {
     return WaveformAnimation(
       isActive: true,
@@ -322,7 +333,7 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
       duration: const Duration(milliseconds: 800),
     );
   }
-  
+
   Widget _buildStaticMicrophone() {
     return AnimatedBuilder(
       animation: _breathingController,
@@ -351,7 +362,8 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: AppConstants.primaryColor.withValues(alpha: opacity * (1 - _rippleController.value)),
+              color: AppConstants.primaryColor
+                  .withValues(alpha: opacity * (1 - _rippleController.value)),
               width: 1,
             ),
           ),
@@ -386,9 +398,9 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
             ],
           ),
         ),
-        
+
         const SizedBox(height: 8),
-        
+
         // Status indicator
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -429,12 +441,18 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
         // Venue Check-in Button
         Expanded(
           child: PremiumButton(
-            text: 'Venue\nCheck-in',
+            text:
+                _selectedVenue != null ? 'Venue\nSelected' : 'Venue\nCheck-in',
             icon: Icons.store,
-            onPressed: measurementState.isMeasuring ? null : () {
-              HushHaptics.lightTap();
-            },
-            style: PremiumButtonStyle.secondary,
+            onPressed: measurementState.isMeasuring
+                ? null
+                : () {
+                    HushHaptics.lightTap();
+                    _showVenueSelection();
+                  },
+            style: _selectedVenue != null
+                ? PremiumButtonStyle.primary
+                : PremiumButtonStyle.secondary,
           ),
         ),
 
@@ -449,13 +467,9 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
             onPressed: () {
               HushHaptics.mediumTap();
               if (measurementState.isMeasuring) {
-                ref.read(measurementStateProvider.notifier).stopMeasurement();
-                _rippleController.stop();
-                _waveformController.stop();
+                _stopMeasurement();
               } else {
-                ref.read(measurementStateProvider.notifier).startMeasurement();
-                _rippleController.repeat();
-                _waveformController.repeat();
+                _showMeasurementTypeModal();
               }
             },
             style: PremiumButtonStyle.primary,
@@ -470,9 +484,11 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
           child: PremiumButton(
             text: 'Report',
             icon: Icons.report,
-            onPressed: measurementState.isMeasuring ? null : () {
-              HushHaptics.lightTap();
-            },
+            onPressed: measurementState.isMeasuring
+                ? null
+                : () {
+                    HushHaptics.lightTap();
+                  },
             style: PremiumButtonStyle.secondary,
           ),
         ),
@@ -487,8 +503,8 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
         Text(
           'Quick Actions',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: AppConstants.textPrimary,
-          ),
+                color: AppConstants.textPrimary,
+              ),
         ),
         const SizedBox(height: 16),
         Row(
@@ -517,6 +533,159 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
           ],
         ),
       ],
+    );
+  }
+
+  void _showMeasurementTypeModal() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => NoiseMeasurementModal(
+        onTypeSelected: (type) {
+          _selectedMeasurementType = type;
+          _startMeasurement();
+        },
+      ),
+    );
+  }
+
+  Future<void> _startMeasurement() async {
+    try {
+      await ref.read(measurementStateProvider.notifier).startMeasurement();
+      _rippleController.repeat();
+      _waveformController.repeat();
+
+      // Show success feedback
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text(_getMeasurementTypeDescription(_selectedMeasurementType!)),
+            backgroundColor: AppConstants.primaryTeal,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      // Show error feedback
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to start measurement: ${e.toString()}'),
+            backgroundColor: AppConstants.errorColor,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
+  void _stopMeasurement() {
+    ref.read(measurementStateProvider.notifier).stopMeasurement();
+    _rippleController.stop();
+    _waveformController.stop();
+
+    // Save measurement if we have data
+    _saveMeasurement();
+  }
+
+  Future<void> _saveMeasurement() async {
+    final measurementState = ref.read(measurementStateProvider);
+    final locationState = ref.read(locationProvider);
+
+    if (measurementState.decibelHistory.isEmpty) return;
+
+    try {
+      // Calculate average decibel level
+      final averageDecibel =
+          measurementState.decibelHistory.reduce((a, b) => a + b) /
+              measurementState.decibelHistory.length;
+
+      // Create noise measurement
+      final measurement = NoiseMeasurement(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        decibelLevel: averageDecibel,
+        latitude: locationState.latitude ?? 0.0,
+        longitude: locationState.longitude ?? 0.0,
+        timestamp: measurementState.measurementStartTime ?? DateTime.now(),
+        type: _getMeasurementTypeEnum(_selectedMeasurementType),
+        venueId: _selectedVenue?.id,
+        userId: 'current_user', // TODO: Get from auth
+      );
+
+      // Save to Hive
+      final noiseMeasurementsBox = ref.read(noiseMeasurementsBoxProvider);
+      await noiseMeasurementsBox.add(measurement);
+
+      // Show success feedback
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Measurement saved: ${averageDecibel.toStringAsFixed(1)} dB'),
+            backgroundColor: AppConstants.successColor,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+
+      // Reset selection
+      _selectedMeasurementType = null;
+      _selectedVenue = null;
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to save measurement: ${e.toString()}'),
+            backgroundColor: AppConstants.errorColor,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
+  String _getMeasurementTypeDescription(NoiseMeasurementType type) {
+    switch (type) {
+      case NoiseMeasurementType.noiseMeasure:
+        return 'Starting general noise measurement';
+      case NoiseMeasurementType.noiseLevel:
+        return 'Starting decibel level measurement';
+      case NoiseMeasurementType.venueMeasures:
+        return 'Starting venue-specific measurement';
+      case NoiseMeasurementType.complaints:
+        return 'Starting noise complaint recording';
+    }
+  }
+
+  MeasurementType _getMeasurementTypeEnum(NoiseMeasurementType? type) {
+    if (type == null) return MeasurementType.active;
+
+    switch (type) {
+      case NoiseMeasurementType.noiseMeasure:
+        return MeasurementType.active;
+      case NoiseMeasurementType.noiseLevel:
+        return MeasurementType.active;
+      case NoiseMeasurementType.venueMeasures:
+        return MeasurementType.venue;
+      case NoiseMeasurementType.complaints:
+        return MeasurementType.active;
+    }
+  }
+
+  void _showVenueSelection() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _VenueSelectionBottomSheet(
+        onVenueSelected: (venue) {
+          setState(() {
+            _selectedVenue = venue;
+          });
+          Navigator.of(context).pop();
+        },
+      ),
     );
   }
 }
@@ -576,6 +745,111 @@ class _QuickActionCard extends StatelessWidget {
                 color: AppConstants.textSecondary,
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _VenueSelectionBottomSheet extends StatelessWidget {
+  final Function(Venue) onVenueSelected;
+
+  const _VenueSelectionBottomSheet({
+    required this.onVenueSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppConstants.surfaceColor,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(AppConstants.radiusXL),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppConstants.paddingL),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppConstants.borderColor,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+
+            const SizedBox(height: AppConstants.paddingL),
+
+            // Title
+            Text(
+              'Select Venue',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppConstants.textPrimary,
+                  ),
+            ),
+
+            const SizedBox(height: AppConstants.paddingL),
+
+            // Venue list (mock data for now)
+            ...List.generate(5, (index) {
+              final venues = [
+                Venue(
+                  id: 'venue_${index + 1}',
+                  name: [
+                    'Starbucks',
+                    'McDonald\'s',
+                    'Central Park',
+                    'Times Square',
+                    'Brooklyn Bridge'
+                  ][index],
+                  address: 'New York, NY',
+                  latitude: 40.7128 + (index * 0.01),
+                  longitude: -74.0060 + (index * 0.01),
+                  type: VenueType.cafe,
+                  tags: ['coffee', 'quiet'],
+                  averageNoiseLevel: 45.0 + (index * 5),
+                ),
+              ];
+
+              return ListTile(
+                leading: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppConstants.primaryTeal.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppConstants.radiusM),
+                  ),
+                  child: Icon(
+                    Icons.store,
+                    color: AppConstants.primaryTeal,
+                  ),
+                ),
+                title: Text(
+                  venues.first.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: AppConstants.textPrimary,
+                  ),
+                ),
+                subtitle: Text(
+                  '${venues.first.averageNoiseLevel.toStringAsFixed(1)} dB average',
+                  style: const TextStyle(
+                    color: AppConstants.textSecondary,
+                  ),
+                ),
+                onTap: () {
+                  onVenueSelected(venues.first);
+                },
+              );
+            }),
+
+            const SizedBox(height: AppConstants.paddingL),
           ],
         ),
       ),
