@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
 
 import '../../domain/models/noise_measurement.dart';
 import '../../domain/models/user_profile.dart';
 import '../../domain/models/venue.dart';
+import '../../core/services/location_service.dart';
+import '../../core/services/audio_service.dart';
 
 // Hive Box Providers
 final noiseMeasurementsBoxProvider = Provider<Box<NoiseMeasurement>>((ref) {
@@ -249,18 +252,58 @@ enum AchievementType { measurements, streak, venues, rewards }
 
 // State Notifiers
 class MeasurementStateNotifier extends StateNotifier<MeasurementState> {
+  final AudioService _audioService = AudioService();
+  StreamSubscription<double>? _audioSubscription;
+
   MeasurementStateNotifier() : super(const MeasurementState());
 
-  void startMeasurement() {
-    state = state.copyWith(
-      isMeasuring: true,
-      measurementStartTime: DateTime.now(),
-      decibelHistory: [],
-    );
+  Future<void> startMeasurement() async {
+    if (state.isMeasuring) return;
+
+    try {
+      // Check microphone permission
+      bool hasPermission = await _audioService.hasMicrophonePermission();
+      if (!hasPermission) {
+        hasPermission = await _audioService.requestMicrophonePermission();
+      }
+
+      if (!hasPermission) {
+        throw AudioServiceException('Microphone permission denied');
+      }
+
+      // Start audio measurement
+      final audioStream = _audioService.startMeasurement();
+
+      state = state.copyWith(
+        isMeasuring: true,
+        measurementStartTime: DateTime.now(),
+        decibelHistory: [],
+      );
+
+      // Subscribe to audio stream
+      _audioSubscription = audioStream.listen(
+        (decibelLevel) {
+          updateDecibelLevel(decibelLevel);
+        },
+        onError: (error) {
+          stopMeasurement();
+        },
+      );
+    } catch (e) {
+      // Handle error - could emit error state here
+      print('Error starting measurement: $e');
+    }
   }
 
   void stopMeasurement() {
-    state = state.copyWith(isMeasuring: false, measurementStartTime: null);
+    _audioSubscription?.cancel();
+    _audioSubscription = null;
+    _audioService.stopMeasurement();
+
+    state = state.copyWith(
+      isMeasuring: false,
+      measurementStartTime: null,
+    );
   }
 
   void updateDecibelLevel(double level) {
@@ -270,27 +313,45 @@ class MeasurementStateNotifier extends StateNotifier<MeasurementState> {
       decibelHistory: newHistory,
     );
   }
+
+  @override
+  void dispose() {
+    _audioSubscription?.cancel();
+    _audioService.dispose();
+    super.dispose();
+  }
 }
 
 class LocationNotifier extends StateNotifier<LocationState> {
+  final LocationService _locationService = LocationService();
+
   LocationNotifier() : super(const LocationState());
 
   Future<void> getCurrentLocation() async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      // TODO: Implement location service
-      // For now, using mock data
-      await Future.delayed(const Duration(seconds: 1));
+      final locationData = await _locationService.getCurrentLocation();
       state = state.copyWith(
-        latitude: 40.7128,
-        longitude: -74.0060,
-        address: 'New York, NY, USA',
+        latitude: locationData.latitude,
+        longitude: locationData.longitude,
+        address: locationData.address,
         isLoading: false,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
     }
+  }
+
+  Future<bool> hasLocationPermission() async {
+    return await _locationService.hasLocationPermission();
+  }
+
+  Future<bool> requestLocationPermission() async {
+    return await _locationService.requestLocationPermission();
   }
 }
 
