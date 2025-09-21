@@ -488,6 +488,7 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
                 ? null
                 : () {
                     HushHaptics.lightTap();
+                    _showReportModal();
                   },
             style: PremiumButtonStyle.secondary,
           ),
@@ -516,6 +517,7 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
                 subtitle: 'View past measurements',
                 onTap: () {
                   HushHaptics.lightTap();
+                  _showHistoryScreen();
                 },
               ),
             ),
@@ -527,6 +529,7 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
                 subtitle: 'See your trends',
                 onTap: () {
                   HushHaptics.lightTap();
+                  _showAnalyticsScreen();
                 },
               ),
             ),
@@ -685,6 +688,34 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
           });
           Navigator.of(context).pop();
         },
+      ),
+    );
+  }
+
+  void _showReportModal() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => _ReportModal(),
+    );
+  }
+
+  void _showHistoryScreen() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('History screen - Coming soon!'),
+        backgroundColor: AppConstants.primaryTeal,
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _showAnalyticsScreen() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Analytics screen - Coming soon!'),
+        backgroundColor: AppConstants.primaryTeal,
+        duration: Duration(seconds: 2),
       ),
     );
   }
@@ -854,5 +885,181 @@ class _VenueSelectionBottomSheet extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _ReportModal extends StatefulWidget {
+  @override
+  State<_ReportModal> createState() => _ReportModalState();
+}
+
+class _ReportModalState extends State<_ReportModal> {
+  final TextEditingController _descriptionController = TextEditingController();
+  String _selectedCategory = 'Construction';
+
+  final List<String> _categories = [
+    'Construction',
+    'Traffic',
+    'Music/Entertainment',
+    'Neighbors',
+    'Commercial Activity',
+    'Other'
+  ];
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: AppConstants.surfaceColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppConstants.radiusXL),
+      ),
+      title: Row(
+        children: [
+          Icon(
+            Icons.report_problem,
+            color: AppConstants.errorColor,
+            size: 24,
+          ),
+          const SizedBox(width: 12),
+          const Text(
+            'Report Noise Issue',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppConstants.textPrimary,
+            ),
+          ),
+        ],
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Category',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: AppConstants.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String>(
+            value: _selectedCategory,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppConstants.radiusM),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+            ),
+            items: _categories.map((category) {
+              return DropdownMenuItem(
+                value: category,
+                child: Text(category),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectedCategory = value!;
+              });
+            },
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Description (Optional)',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: AppConstants.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _descriptionController,
+            maxLines: 3,
+            decoration: InputDecoration(
+              hintText: 'Describe the noise issue...',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppConstants.radiusM),
+              ),
+              contentPadding: const EdgeInsets.all(16),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppConstants.warningColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(AppConstants.radiusM),
+              border: Border.all(
+                color: AppConstants.warningColor.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  color: AppConstants.warningColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    'This report is for community awareness and will not earn rewards.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppConstants.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text(
+            'Cancel',
+            style: TextStyle(color: AppConstants.textSecondary),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            HushHaptics.mediumTap();
+            _submitReport();
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppConstants.primaryTeal,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppConstants.radiusM),
+            ),
+          ),
+          child: const Text('Submit Report'),
+        ),
+      ],
+    );
+  }
+
+  void _submitReport() {
+    // Here you would typically save the report to the database
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Noise report submitted successfully!'),
+        backgroundColor: AppConstants.successColor,
+        duration: Duration(seconds: 2),
+      ),
+    );
+    Navigator.of(context).pop();
   }
 }

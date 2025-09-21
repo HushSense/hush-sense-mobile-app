@@ -75,18 +75,26 @@ class _NoiseMeasurementModalState extends State<NoiseMeasurementModal>
                     ),
                   ],
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Header
-                    _buildHeader(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.8,
+                    maxWidth: MediaQuery.of(context).size.width * 0.9,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Header
+                      _buildHeader(),
 
-                    // Options Grid
-                    _buildOptionsGrid(),
+                      // Options Grid - Make it flexible
+                      Flexible(
+                        child: _buildOptionsGrid(),
+                      ),
 
-                    // Action Buttons
-                    _buildActionButtons(),
-                  ],
+                      // Action Buttons
+                      _buildActionButtons(),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -98,13 +106,13 @@ class _NoiseMeasurementModalState extends State<NoiseMeasurementModal>
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.all(AppConstants.paddingXL),
+      padding: const EdgeInsets.all(AppConstants.paddingL),
       child: Column(
         children: [
           // Icon with gradient background
           Container(
-            width: 80,
-            height: 80,
+            width: 100,
+            height: 100,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
@@ -125,7 +133,7 @@ class _NoiseMeasurementModalState extends State<NoiseMeasurementModal>
             ),
             child: const Icon(
               Icons.mic,
-              size: AppConstants.iconSizeXL,
+              size: 32,
               color: AppConstants.primaryTeal,
             ),
           ),
@@ -193,36 +201,39 @@ class _NoiseMeasurementModalState extends State<NoiseMeasurementModal>
     ];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingL),
-      child: GridView.builder(
-        shrinkWrap: true,
+      padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingM),
+      child: SingleChildScrollView(
         physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: AppConstants.paddingM,
-          mainAxisSpacing: AppConstants.paddingM,
-          childAspectRatio: 1.1,
+        child: GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: AppConstants.paddingS,
+            mainAxisSpacing: AppConstants.paddingS,
+            childAspectRatio: 1,
+          ),
+          itemCount: options.length,
+          itemBuilder: (context, index) {
+            return _MeasurementOptionCard(
+              option: options[index],
+              isSelected: _selectedType == options[index].type,
+              onTap: () {
+                HushHaptics.lightTap();
+                setState(() {
+                  _selectedType = options[index].type;
+                });
+              },
+            );
+          },
         ),
-        itemCount: options.length,
-        itemBuilder: (context, index) {
-          return _MeasurementOptionCard(
-            option: options[index],
-            isSelected: _selectedType == options[index].type,
-            onTap: () {
-              HushHaptics.lightTap();
-              setState(() {
-                _selectedType = options[index].type;
-              });
-            },
-          );
-        },
       ),
     );
   }
 
   Widget _buildActionButtons() {
     return Padding(
-      padding: const EdgeInsets.all(AppConstants.paddingXL),
+      padding: const EdgeInsets.all(AppConstants.paddingL),
       child: Row(
         children: [
           // Cancel Button
@@ -322,9 +333,9 @@ class _MeasurementOptionCard extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(AppConstants.paddingL),
+          padding: const EdgeInsets.all(AppConstants.paddingS),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               // Icon
               AnimatedContainer(
@@ -344,7 +355,7 @@ class _MeasurementOptionCard extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: AppConstants.paddingM),
+              const SizedBox(height: AppConstants.paddingXS),
 
               // Title
               Text(
@@ -378,5 +389,3 @@ class _MeasurementOptionCard extends StatelessWidget {
     );
   }
 }
-
-
