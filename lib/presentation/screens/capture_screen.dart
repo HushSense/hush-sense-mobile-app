@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:async';
 import 'dart:math' as math;
 import '../../core/constants/app_constants.dart';
 import '../providers/app_providers.dart';
@@ -11,6 +12,7 @@ import '../../domain/models/noise_measurement.dart';
 import '../../domain/models/venue.dart';
 import 'history_screen.dart';
 import 'analytics_screen.dart';
+import 'map_screen.dart';
 
 class MeasureScreen extends ConsumerStatefulWidget {
   const MeasureScreen({super.key});
@@ -556,6 +558,7 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
 
   Future<void> _startMeasurement() async {
     try {
+      // Start real audio measurement
       await ref.read(measurementStateProvider.notifier).startMeasurement();
       _rippleController.repeat();
       _waveformController.repeat();
@@ -565,25 +568,45 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
         // UI will automatically update based on measurementState.isMeasuring
       });
 
-      // Show brief success feedback
+      // Show measurement started feedback
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-                'Measuring ${_getMeasurementTypeDescription(_selectedMeasurementType!)}'),
+            content: Row(
+              children: [
+                const SizedBox(width: 8),
+                Text(
+                    '🎙️ Measuring ${_getMeasurementTypeDescription(_selectedMeasurementType!)}'),
+              ],
+            ),
             backgroundColor: AppConstants.primaryTeal,
-            duration: const Duration(seconds: 1),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
+
+      // Auto-stop measurement after 30 seconds for demo
+      Timer(const Duration(seconds: 30), () {
+        if (mounted && ref.read(measurementStateProvider).isMeasuring) {
+          _stopMeasurement();
+        }
+      });
     } catch (e) {
       // Show error feedback
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to start measurement: ${e.toString()}'),
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.white, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                    child: Text(
+                        'Failed to start real measurement: ${e.toString()}')),
+              ],
+            ),
             backgroundColor: AppConstants.errorColor,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -595,7 +618,7 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
     _rippleController.stop();
     _waveformController.stop();
 
-    // Save measurement if we have data
+    // Save measurement and show results
     _saveMeasurement();
   }
 
@@ -627,17 +650,15 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
       final noiseMeasurementsBox = ref.read(noiseMeasurementsBoxProvider);
       await noiseMeasurementsBox.add(measurement);
 
-      // Show success feedback
+      // Show detailed results modal
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                'Measurement saved: ${averageDecibel.toStringAsFixed(1)} dB'),
-            backgroundColor: AppConstants.successColor,
-            duration: const Duration(seconds: 2),
-          ),
-        );
+        _showMeasurementResults(measurement, averageDecibel);
       }
+
+      // Notify map screen about new measurement (if it's loaded)
+      // This will help update the map with the new measurement
+      debugPrint(
+          '📊 New measurement saved: ${averageDecibel.toStringAsFixed(1)} dB at ${locationState.address}');
 
       // Reset selection
       _selectedMeasurementType = null;
@@ -653,6 +674,182 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
         );
       }
     }
+  }
+
+  void _showMeasurementResults(
+      NoiseMeasurement measurement, double averageDecibel) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).cardColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusL),
+        ),
+        title: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: _getNoiseColor(averageDecibel),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.check,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Measurement Complete!',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppConstants.textPrimary,
+                        ),
+                  ),
+                  Text(
+                    '${averageDecibel.toStringAsFixed(1)} dB • ${_getNoiseLabel(averageDecibel)}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppConstants.textSecondary,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildResultItem(
+              'Type',
+              _getMeasurementTypeDescription(_selectedMeasurementType ??
+                  NoiseMeasurementType.noiseMeasure),
+              Icons.category,
+            ),
+            const SizedBox(height: 12),
+            _buildResultItem(
+              'Location',
+              ref.read(locationProvider).address ?? 'Unknown location',
+              Icons.location_on,
+            ),
+            const SizedBox(height: 12),
+            _buildResultItem(
+              'Duration',
+              '30 seconds',
+              Icons.timer,
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: _getNoiseColor(averageDecibel).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Health Impact',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: AppConstants.textPrimary,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _getHealthAdvice(averageDecibel),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppConstants.textSecondary,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text(
+              'View Details',
+              style: TextStyle(color: AppConstants.primaryTeal),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // Navigate to maps screen to show the measurement
+              _navigateToMapsScreen();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppConstants.primaryTeal,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text('Done'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultItem(String label, String value, IconData icon) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 20,
+          color: AppConstants.textSecondary,
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppConstants.textSecondary,
+                    ),
+              ),
+              Text(
+                value,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: AppConstants.textPrimary,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _getHealthAdvice(double decibelLevel) {
+    if (decibelLevel < 40) {
+      return 'Perfect for concentration and relaxation. Ideal environment for work and sleep.';
+    }
+    if (decibelLevel < 55) {
+      return 'Comfortable for conversation and light work. Generally pleasant environment.';
+    }
+    if (decibelLevel < 70) {
+      return 'May cause fatigue with prolonged exposure. Consider breaks if staying long.';
+    }
+    if (decibelLevel < 85) {
+      return 'Potentially harmful with extended exposure. Limit time in this environment.';
+    }
+    return 'Dangerous - hearing protection recommended. Avoid prolonged exposure.';
   }
 
   String _getMeasurementTypeDescription(NoiseMeasurementType type) {
@@ -721,6 +918,15 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const AnalyticsScreen(),
+      ),
+    );
+  }
+
+  void _navigateToMapsScreen() {
+    // Navigate to maps screen to show the measurement
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const MapScreen(),
       ),
     );
   }
@@ -798,9 +1004,9 @@ class _VenueSelectionBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppConstants.surfaceColor,
-        borderRadius: const BorderRadius.vertical(
+        borderRadius: BorderRadius.vertical(
           top: Radius.circular(AppConstants.radiusXL),
         ),
       ),
@@ -861,7 +1067,7 @@ class _VenueSelectionBottomSheet extends StatelessWidget {
                     color: AppConstants.primaryTeal.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppConstants.radiusM),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.store,
                     color: AppConstants.primaryTeal,
                   ),
@@ -924,15 +1130,15 @@ class _ReportModalState extends State<_ReportModal> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppConstants.radiusXL),
       ),
-      title: Row(
+      title: const Row(
         children: [
           Icon(
             Icons.report_problem,
             color: AppConstants.errorColor,
             size: 24,
           ),
-          const SizedBox(width: 12),
-          const Text(
+          SizedBox(width: 12),
+          Text(
             'Report Noise Issue',
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -954,7 +1160,7 @@ class _ReportModalState extends State<_ReportModal> {
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
-            value: _selectedCategory,
+            initialValue: _selectedCategory,
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppConstants.radiusM),
@@ -1006,15 +1212,15 @@ class _ReportModalState extends State<_ReportModal> {
                 color: AppConstants.warningColor.withValues(alpha: 0.3),
               ),
             ),
-            child: Row(
+            child: const Row(
               children: [
                 Icon(
                   Icons.info_outline,
                   color: AppConstants.warningColor,
                   size: 20,
                 ),
-                const SizedBox(width: 8),
-                const Expanded(
+                SizedBox(width: 8),
+                Expanded(
                   child: Text(
                     'This report is for community awareness and will not earn rewards.',
                     style: TextStyle(

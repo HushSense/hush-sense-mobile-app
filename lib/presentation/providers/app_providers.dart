@@ -272,8 +272,6 @@ class MeasurementStateNotifier extends StateNotifier<MeasurementState> {
       }
 
       // Start audio measurement
-      final audioStream = _audioService.startMeasurement();
-
       state = state.copyWith(
         isMeasuring: true,
         measurementStartTime: DateTime.now(),
@@ -281,17 +279,18 @@ class MeasurementStateNotifier extends StateNotifier<MeasurementState> {
       );
 
       // Subscribe to audio stream
-      _audioSubscription = audioStream.listen(
+      _audioSubscription = _audioService.startMeasurement().listen(
         (decibelLevel) {
           updateDecibelLevel(decibelLevel);
         },
         onError: (error) {
+          debugPrint('Audio measurement error: $error');
           stopMeasurement();
         },
       );
     } catch (e) {
       // Handle error - could emit error state here
-      print('Error starting measurement: $e');
+      debugPrint('Error starting measurement: $e');
     }
   }
 

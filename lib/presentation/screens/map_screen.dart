@@ -5,6 +5,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../providers/app_providers.dart';
+import '../widgets/noise_measurement_modal.dart';
+import '../../domain/models/noise_measurement.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({super.key});
@@ -18,11 +21,11 @@ class _MapScreenState extends ConsumerState<MapScreen>
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
   GoogleMapController? _mapController;
-  // LatLng? _userLatLng;
+  LatLng? _userLatLng;
   Marker? _userMarker;
-  
+
   static const CameraPosition _initialPosition = CameraPosition(
-    target: LatLng(40.7589, -73.9851), // NYC
+    target: LatLng(0.0, 0.0), // Will be updated to user location
     zoom: 14.0,
   );
 
@@ -83,6 +86,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _initLocation();
+    _loadRealMeasurements();
   }
 
   @override
@@ -127,7 +131,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
       );
 
       setState(() {
-        // _userLatLng = userLatLng;
+        _userLatLng = userLatLng;
         _userMarker = userMarker;
       });
 
@@ -154,20 +158,35 @@ class _MapScreenState extends ConsumerState<MapScreen>
     final random = math.Random();
     final venueTypes = ['Library', 'Cafe', 'Restaurant', 'Retail', 'Park'];
     final venueNames = [
-      'Quiet Nook', 'City Library', 'Corner Cafe', 'Urban Eatery', 'Central Park',
-      'Riverside Cafe', 'Downtown Hub', 'Book Haven', 'Silent Study', 'Green Plaza',
-      'Zen Lounge', 'Serenity Spot', 'Market Square', 'Harbor View', 'Skyline Bar'
+      'Quiet Nook',
+      'City Library',
+      'Corner Cafe',
+      'Urban Eatery',
+      'Central Park',
+      'Riverside Cafe',
+      'Downtown Hub',
+      'Book Haven',
+      'Silent Study',
+      'Green Plaza',
+      'Zen Lounge',
+      'Serenity Spot',
+      'Market Square',
+      'Harbor View',
+      'Skyline Bar'
     ];
 
     // Create 24 points distributed around the user
     const int count = 24;
     for (int i = 0; i < count; i++) {
-      final angle = (2 * math.pi / count) * i + random.nextDouble() * 0.2; // slight jitter
-      final radiusDeg = 0.001 + random.nextDouble() * 0.03; // 0.01 - 0.04 degrees (~1.1 - 4.4 km)
+      final angle = (2 * math.pi / count) * i +
+          random.nextDouble() * 0.2; // slight jitter
+      final radiusDeg = 0.001 +
+          random.nextDouble() * 0.03; // 0.01 - 0.04 degrees (~1.1 - 4.4 km)
 
       // Adjust lon by cos(latitude) factor for more accurate spacing
       final latOffset = radiusDeg * math.sin(angle);
-      final lonOffset = (radiusDeg * math.cos(angle)) / math.cos(center.latitude * math.pi / 180);
+      final lonOffset = (radiusDeg * math.cos(angle)) /
+          math.cos(center.latitude * math.pi / 180);
 
       final lat = center.latitude + latOffset;
       final lon = center.longitude + lonOffset;
@@ -204,6 +223,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
               initialCameraPosition: _initialPosition,
               onMapCreated: (GoogleMapController controller) {
                 _mapController = controller;
+                debugPrint('GoogleMap created successfully');
               },
               markers: _getAllMarkers(),
               mapType: MapType.normal,
@@ -212,8 +232,10 @@ class _MapScreenState extends ConsumerState<MapScreen>
               zoomControlsEnabled: false,
               mapToolbarEnabled: false,
               compassEnabled: false,
-              // Remove custom styling that might cause issues
-              // style: null,
+              onTap: (LatLng location) {
+                debugPrint(
+                    'Map tapped at: ${location.latitude}, ${location.longitude}');
+              },
             ),
           ),
 
@@ -241,7 +263,8 @@ class _MapScreenState extends ConsumerState<MapScreen>
                       color: AppConstants.primaryColor,
                       borderRadius: BorderRadius.circular(AppConstants.radiusL),
                     ),
-                    indicatorPadding: const EdgeInsets.all(AppConstants.paddingS - 3),
+                    indicatorPadding:
+                        const EdgeInsets.all(AppConstants.paddingS - 3),
                     indicatorSize: TabBarIndicatorSize.tab,
                     dividerColor: Colors.transparent,
                     labelColor: Colors.white,
@@ -361,21 +384,29 @@ class _MapScreenState extends ConsumerState<MapScreen>
                       ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppConstants.primaryColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Text(
-                      'Tap to measure',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppConstants.primaryColor,
+                  GestureDetector(
+                    onTap:
+                        _userLatLng != null ? _measureAtCurrentLocation : null,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppConstants.primaryColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        _userLatLng != null
+                            ? 'Tap to measure'
+                            : 'Getting location...',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: _userLatLng != null
+                              ? AppConstants.primaryColor
+                              : AppConstants.textSecondary,
+                        ),
                       ),
                     ),
                   ),
@@ -483,6 +514,7 @@ class _MapScreenState extends ConsumerState<MapScreen>
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
+                  _startMeasurementAtLocation(point);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppConstants.primaryColor,
@@ -512,6 +544,287 @@ class _MapScreenState extends ConsumerState<MapScreen>
     if (decibelLevel < 55) return AppConstants.noiseModerate;
     if (decibelLevel < 70) return AppConstants.noiseLoud;
     return AppConstants.noiseVeryLoud;
+  }
+
+  void _startMeasurementAtLocation(MeasurementPoint point) {
+    // Show measurement type selection modal
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => NoiseMeasurementModal(
+        onTypeSelected: (type) async {
+          Navigator.pop(context);
+          await _beginRealMeasurementAtPoint(point, type);
+        },
+      ),
+    );
+  }
+
+  Future<void> _beginRealMeasurementAtPoint(
+      MeasurementPoint point, NoiseMeasurementType measurementType) async {
+    try {
+      // Show measurement in progress
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                  '🎙️ Measuring ${measurementType.name} at ${point.venueName}...'),
+            ],
+          ),
+          backgroundColor: AppConstants.primaryTeal,
+          duration: const Duration(seconds: 30),
+        ),
+      );
+
+      // Start real measurement
+      await ref.read(measurementStateProvider.notifier).startMeasurement();
+
+      // Auto-stop after 30 seconds and update the map
+      Future.delayed(const Duration(seconds: 30), () async {
+        try {
+          // Check if widget is still mounted and context is valid
+          if (!mounted || !context.mounted) return;
+
+          final measurementState = ref.read(measurementStateProvider);
+          if (measurementState.isMeasuring) {
+            ref.read(measurementStateProvider.notifier).stopMeasurement();
+
+            // Calculate average and update map point
+            if (measurementState.decibelHistory.isNotEmpty) {
+              final averageDecibel =
+                  measurementState.decibelHistory.reduce((a, b) => a + b) /
+                      measurementState.decibelHistory.length;
+
+              // Update this point with real measurement
+              _updatePointWithRealMeasurement(
+                  point, averageDecibel, measurementType.name);
+
+              // Save measurement to database
+              await _saveMapMeasurement(point, averageDecibel, measurementType);
+
+              // If this is a user location measurement, add it to current location
+              if (point.id == 'user_location') {
+                _addRealTimeUserLocationMeasurement(averageDecibel);
+              }
+
+              // Show completion feedback with safe navigation check
+              if (mounted && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        '✅ Real measurement complete: ${averageDecibel.toStringAsFixed(1)} dB'),
+                    backgroundColor: AppConstants.successColor,
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              }
+            }
+          }
+        } catch (e) {
+          debugPrint('Error in delayed measurement completion: $e');
+          if (mounted && context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content:
+                    Text('❌ Error completing measurement: ${e.toString()}'),
+                backgroundColor: AppConstants.errorColor,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+          }
+        }
+      });
+    } catch (e) {
+      if (mounted && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Measurement failed: ${e.toString()}'),
+            backgroundColor: AppConstants.errorColor,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
+  void _updatePointWithRealMeasurement(
+      MeasurementPoint point, double realDecibel, String measurementType) {
+    setState(() {
+      // Find and update the point
+      for (int i = 0; i < _measurementPoints.length; i++) {
+        if (_measurementPoints[i].id == point.id) {
+          _measurementPoints[i] = MeasurementPoint(
+            id: point.id,
+            latitude: point.latitude,
+            longitude: point.longitude,
+            decibelLevel: realDecibel,
+            venueName: '${point.venueName} (Real)',
+            venueType: measurementType,
+          );
+          break;
+        }
+      }
+    });
+  }
+
+  /// Add real-time measurement at user's current location
+  void _addRealTimeUserLocationMeasurement(double decibelLevel) {
+    if (_userLatLng != null) {
+      setState(() {
+        // Remove any existing user location measurements to avoid duplicates
+        _measurementPoints
+            .removeWhere((point) => point.id.startsWith('user_real_'));
+
+        // Add new measurement point at user's current location
+        _measurementPoints.add(MeasurementPoint(
+          id: 'user_real_${DateTime.now().millisecondsSinceEpoch}',
+          latitude: _userLatLng!.latitude,
+          longitude: _userLatLng!.longitude,
+          decibelLevel: decibelLevel,
+          venueName: 'Your Location (Real)',
+          venueType: 'Live Measurement',
+        ));
+      });
+    }
+  }
+
+  /// Save map measurement to database for real-time updates
+  Future<void> _saveMapMeasurement(MeasurementPoint point,
+      double averageDecibel, NoiseMeasurementType measurementType) async {
+    try {
+      ref.read(locationProvider);
+
+      // Create noise measurement from map location
+      final measurement = NoiseMeasurement(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        decibelLevel: averageDecibel,
+        latitude: point.latitude,
+        longitude: point.longitude,
+        timestamp: DateTime.now(),
+        type: _getMeasurementTypeEnum(measurementType),
+        venueId: point.id,
+        userId: 'current_user', // TODO: Get from auth
+      );
+
+      // Save to Hive database
+      final noiseMeasurementsBox = ref.read(noiseMeasurementsBoxProvider);
+      await noiseMeasurementsBox.add(measurement);
+
+      debugPrint(
+          '🗺️ Map measurement saved: ${averageDecibel.toStringAsFixed(1)} dB at ${point.venueName}');
+    } catch (e) {
+      debugPrint('Error saving map measurement: $e');
+    }
+  }
+
+  /// Convert NoiseMeasurementType to MeasurementType enum
+  MeasurementType _getMeasurementTypeEnum(NoiseMeasurementType type) {
+    switch (type) {
+      case NoiseMeasurementType.noiseMeasure:
+        return MeasurementType.active;
+      case NoiseMeasurementType.noiseLevel:
+        return MeasurementType.active;
+      case NoiseMeasurementType.venueMeasures:
+        return MeasurementType.venue;
+      case NoiseMeasurementType.complaints:
+        return MeasurementType.active;
+    }
+  }
+
+  /// Measure at user's current location
+  void _measureAtCurrentLocation() {
+    if (_userLatLng == null) return;
+
+    // Create a temporary measurement point at user's location
+    final userPoint = MeasurementPoint(
+      id: 'user_location',
+      latitude: _userLatLng!.latitude,
+      longitude: _userLatLng!.longitude,
+      decibelLevel: 0.0, // Will be updated after measurement
+      venueName: 'Your Location',
+      venueType: 'Current Location',
+    );
+
+    _startMeasurementAtLocation(userPoint);
+  }
+
+  void _loadRealMeasurements() async {
+    // Load measurements from Hive and add them to the map
+    try {
+      final measurementsAsync = ref.read(noiseMeasurementsProvider);
+      measurementsAsync.when(
+        data: (measurements) {
+          for (final measurement in measurements) {
+            if (measurement.latitude != 0.0 && measurement.longitude != 0.0) {
+              // Check if this measurement is near user's current location
+              bool isUserLocation = false;
+              if (_userLatLng != null) {
+                final distance = _calculateDistance(
+                  _userLatLng!.latitude,
+                  _userLatLng!.longitude,
+                  measurement.latitude,
+                  measurement.longitude,
+                );
+                // If within 100 meters, consider it user's location
+                isUserLocation = distance < 0.1; // 100 meters
+              }
+
+              _measurementPoints.add(MeasurementPoint(
+                id: 'real_${measurement.id}',
+                latitude: measurement.latitude,
+                longitude: measurement.longitude,
+                decibelLevel: measurement.decibelLevel,
+                venueName: isUserLocation
+                    ? 'Your Location (Real)'
+                    : 'Real Measurement',
+                venueType:
+                    isUserLocation ? 'Live Measurement' : 'User Measured',
+              ));
+            }
+          }
+          if (mounted) setState(() {});
+        },
+        loading: () => debugPrint('Loading measurements...'),
+        error: (error, stack) =>
+            debugPrint('Error loading measurements: $error'),
+      );
+    } catch (e) {
+      debugPrint('Error loading real measurements: $e');
+    }
+  }
+
+  /// Calculate distance between two coordinates in kilometers
+  double _calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) {
+    const double earthRadius = 6371; // Earth's radius in kilometers
+
+    final dLat = _degreesToRadians(lat2 - lat1);
+    final dLon = _degreesToRadians(lon2 - lon1);
+
+    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(_degreesToRadians(lat1)) *
+            math.cos(_degreesToRadians(lat2)) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
+
+    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
+
+    return earthRadius * c;
+  }
+
+  double _degreesToRadians(double degrees) {
+    return degrees * (math.pi / 180);
   }
 }
 
@@ -583,4 +896,3 @@ class MapPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-
