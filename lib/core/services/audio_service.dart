@@ -90,7 +90,8 @@ class AudioService {
     double rawDecibel = reading.meanDecibel;
 
     // Debug: Log raw values to ensure we're getting real data
-    debugPrint('🎙️ RAW AUDIO DATA: $rawDecibel dB (Max: ${reading.maxDecibel})');
+    debugPrint(
+        '🎙️ RAW AUDIO DATA: $rawDecibel dB (Max: ${reading.maxDecibel})');
 
     // Handle edge cases
     if (rawDecibel.isNaN || rawDecibel.isInfinite || rawDecibel < -100) {
