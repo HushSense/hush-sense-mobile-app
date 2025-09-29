@@ -12,6 +12,10 @@ class RewardsScreen extends ConsumerStatefulWidget {
 
 class _RewardsScreenState extends ConsumerState<RewardsScreen>
     with TickerProviderStateMixin {
+  static const _accountId = '0.0.9230661';
+  static const _nftId = '0.0.9974472';
+  static const _nftImagePath = 'assets/images/NFT.jpg';
+
   late AnimationController _animationController;
   late List<Animation<double>> _fadeAnimations;
   late List<Animation<Offset>> _slideAnimations;
@@ -115,20 +119,24 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               _buildAnimatedSection(1, _buildWalletCard()),
               const SizedBox(height: AppConstants.paddingL),
 
+              // NFT Showcase
+              _buildAnimatedSection(2, _buildNftShowcase(context)),
+              const SizedBox(height: AppConstants.paddingL),
+
               // Earning Stats
-              _buildAnimatedSection(2, _buildEarningStats()),
+              _buildAnimatedSection(3, _buildEarningStats()),
               const SizedBox(height: AppConstants.paddingL),
 
               // Achievement Badges
-              _buildAnimatedSection(3, _buildAchievements(context)),
+              _buildAnimatedSection(4, _buildAchievements(context)),
               const SizedBox(height: AppConstants.paddingL),
 
               // Leaderboard Preview
-              _buildAnimatedSection(4, _buildLeaderboard(context)),
+              _buildAnimatedSection(5, _buildLeaderboard(context)),
               const SizedBox(height: AppConstants.paddingL),
 
               // Redemption Options
-              _buildAnimatedSection(5, _buildRedemptionOptions()),
+              _buildAnimatedSection(6, _buildRedemptionOptions()),
               const SizedBox(height: AppConstants.paddingL),
             ],
           ),
@@ -282,7 +290,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                   ),
                 ],
               ),
-              const SizedBox(height: AppConstants.paddingL),
+              const SizedBox(height: AppConstants.paddingS),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -336,7 +344,144 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                   ),
                 ),
               ),
+              const SizedBox(height: AppConstants.paddingM),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.16),
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(
+                      Icons.verified_user_outlined,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Account ID',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            _accountId,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        'Hedera',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.85),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNftShowcase(BuildContext context) {
+    final theme = Theme.of(context);
+    final highlightColor = theme.colorScheme.primary.withValues(alpha: 0.12);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppConstants.paddingL),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: highlightColor),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.primary.withValues(alpha: 0.08),
+            blurRadius: 24,
+            offset: const Offset(0, 16),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Featured NFT',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'NFT ID: $_nftId',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppConstants.paddingM),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: AspectRatio(
+              aspectRatio: 4 / 3,
+              child: Image.asset(
+                _nftImagePath,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(height: AppConstants.paddingM),
+          Text(
+            'HushSense Pioneer Badge',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'This badge commemorates your foundational role in the HushSense network. '
+            'Keep contributing measurements to unlock future drops.',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
