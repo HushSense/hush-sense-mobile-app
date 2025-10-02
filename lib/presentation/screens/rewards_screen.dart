@@ -464,6 +464,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               child: Image.asset(
                 _nftImagePath,
                 fit: BoxFit.cover,
+                
               ),
             ),
           ),
