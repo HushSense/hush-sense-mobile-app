@@ -49,6 +49,33 @@ class UserProfile extends HiveObject {
   @HiveField(14)
   late DateTime updatedAt;
 
+  @HiveField(15)
+  late String? walletAccountId;
+
+  @HiveField(16)
+  late double? hbarBalance;
+
+  @HiveField(17)
+  late double? hushTokenBalance;
+
+  @HiveField(18)
+  late DateTime? lastWalletSync;
+
+  @HiveField(19)
+  late double? totalRewardsEarned;
+
+  @HiveField(20)
+  late double? totalRewardsClaimed;
+
+  @HiveField(21)
+  late int? currentStreak;
+
+  @HiveField(22)
+  late int? venuesVisited;
+
+  @HiveField(23)
+  late List<String>? achievements;
+
   UserProfile({
     required this.id,
     required this.username,
@@ -65,6 +92,15 @@ class UserProfile extends HiveObject {
     DateTime? lastActiveParam,
     DateTime? createdAtParam,
     DateTime? updatedAtParam,
+    this.walletAccountId,
+    this.hbarBalance,
+    this.hushTokenBalance,
+    this.lastWalletSync,
+    this.totalRewardsEarned,
+    this.totalRewardsClaimed,
+    this.currentStreak,
+    this.venuesVisited,
+    this.achievements,
   }) {
     lastActive = lastActiveParam ?? DateTime.now();
     createdAt = createdAtParam ?? DateTime.now();
@@ -92,6 +128,19 @@ class UserProfile extends HiveObject {
       lastActiveParam: DateTime.parse(json['lastActive'] as String),
       createdAtParam: DateTime.parse(json['createdAt'] as String),
       updatedAtParam: DateTime.parse(json['updatedAt'] as String),
+      walletAccountId: json['walletAccountId'] as String?,
+      hbarBalance: (json['hbarBalance'] as num?)?.toDouble(),
+      hushTokenBalance: (json['hushTokenBalance'] as num?)?.toDouble(),
+      lastWalletSync: json['lastWalletSync'] != null
+          ? DateTime.parse(json['lastWalletSync'] as String)
+          : null,
+      totalRewardsEarned: (json['totalRewardsEarned'] as num?)?.toDouble(),
+      totalRewardsClaimed: (json['totalRewardsClaimed'] as num?)?.toDouble(),
+      currentStreak: json['currentStreak'] as int?,
+      venuesVisited: json['venuesVisited'] as int?,
+      achievements: json['achievements'] != null
+          ? List<String>.from(json['achievements'] as List)
+          : null,
     );
   }
 
@@ -112,6 +161,15 @@ class UserProfile extends HiveObject {
       'lastActive': lastActive.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
+      'walletAccountId': walletAccountId,
+      'hbarBalance': hbarBalance,
+      'hushTokenBalance': hushTokenBalance,
+      'lastWalletSync': lastWalletSync?.toIso8601String(),
+      'totalRewardsEarned': totalRewardsEarned,
+      'totalRewardsClaimed': totalRewardsClaimed,
+      'currentStreak': currentStreak,
+      'venuesVisited': venuesVisited,
+      'achievements': achievements,
     };
   }
 
@@ -131,6 +189,15 @@ class UserProfile extends HiveObject {
     DateTime? lastActive,
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? walletAccountId,
+    double? hbarBalance,
+    double? hushTokenBalance,
+    DateTime? lastWalletSync,
+    double? totalRewardsEarned,
+    double? totalRewardsClaimed,
+    int? currentStreak,
+    int? venuesVisited,
+    List<String>? achievements,
   }) {
     return UserProfile(
       id: id ?? this.id,
@@ -148,6 +215,15 @@ class UserProfile extends HiveObject {
       lastActiveParam: lastActive ?? this.lastActive,
       createdAtParam: createdAt ?? this.createdAt,
       updatedAtParam: updatedAt ?? this.updatedAt,
+      walletAccountId: walletAccountId ?? this.walletAccountId,
+      hbarBalance: hbarBalance ?? this.hbarBalance,
+      hushTokenBalance: hushTokenBalance ?? this.hushTokenBalance,
+      lastWalletSync: lastWalletSync ?? this.lastWalletSync,
+      totalRewardsEarned: totalRewardsEarned ?? this.totalRewardsEarned,
+      totalRewardsClaimed: totalRewardsClaimed ?? this.totalRewardsClaimed,
+      currentStreak: currentStreak ?? this.currentStreak,
+      venuesVisited: venuesVisited ?? this.venuesVisited,
+      achievements: achievements ?? this.achievements,
     );
   }
 

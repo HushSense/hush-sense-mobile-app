@@ -634,6 +634,13 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
           measurementState.decibelHistory.reduce((a, b) => a + b) /
               measurementState.decibelHistory.length;
 
+      // Calculate measurement duration
+      final measurementDuration = measurementState.measurementStartTime != null
+          ? DateTime.now()
+              .difference(measurementState.measurementStartTime!)
+              .inSeconds
+          : AppConstants.measurementDurationSeconds;
+
       // Create noise measurement
       final measurement = NoiseMeasurement(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -642,13 +649,19 @@ class _MeasureScreenState extends ConsumerState<MeasureScreen>
         longitude: locationState.longitude ?? 0.0,
         timestamp: measurementState.measurementStartTime ?? DateTime.now(),
         type: _getMeasurementTypeEnum(_selectedMeasurementType),
+        status: MeasurementStatus.completed,
         venueId: _selectedVenue?.id,
         userId: 'current_user', // TODO: Get from auth
+        duration: measurementDuration,
+        locationAccuracy: null, // TODO: Add accuracy to LocationState
       );
 
       // Save to Hive
       final noiseMeasurementsBox = ref.read(noiseMeasurementsBoxProvider);
       await noiseMeasurementsBox.add(measurement);
+
+      // TODO: Process rewards for the measurement
+      // await _processRewards(measurement);
 
       // Show detailed results modal
       if (mounted) {

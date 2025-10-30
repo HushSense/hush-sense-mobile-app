@@ -29,6 +29,15 @@ class UserProfileAdapter extends TypeAdapter<UserProfile> {
       badges: (fields[9] as List).cast<String>(),
       preferences: (fields[10] as Map).cast<String, dynamic>(),
       isPremium: fields[11] as bool,
+      walletAccountId: fields[15] as String?,
+      hbarBalance: fields[16] as double?,
+      hushTokenBalance: fields[17] as double?,
+      lastWalletSync: fields[18] as DateTime?,
+      totalRewardsEarned: fields[19] as double?,
+      totalRewardsClaimed: fields[20] as double?,
+      currentStreak: fields[21] as int?,
+      venuesVisited: fields[22] as int?,
+      achievements: (fields[23] as List?)?.cast<String>(),
     )
       ..lastActive = fields[12] as DateTime
       ..createdAt = fields[13] as DateTime
@@ -38,7 +47,7 @@ class UserProfileAdapter extends TypeAdapter<UserProfile> {
   @override
   void write(BinaryWriter writer, UserProfile obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(24)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -68,7 +77,25 @@ class UserProfileAdapter extends TypeAdapter<UserProfile> {
       ..writeByte(13)
       ..write(obj.createdAt)
       ..writeByte(14)
-      ..write(obj.updatedAt);
+      ..write(obj.updatedAt)
+      ..writeByte(15)
+      ..write(obj.walletAccountId)
+      ..writeByte(16)
+      ..write(obj.hbarBalance)
+      ..writeByte(17)
+      ..write(obj.hushTokenBalance)
+      ..writeByte(18)
+      ..write(obj.lastWalletSync)
+      ..writeByte(19)
+      ..write(obj.totalRewardsEarned)
+      ..writeByte(20)
+      ..write(obj.totalRewardsClaimed)
+      ..writeByte(21)
+      ..write(obj.currentStreak)
+      ..writeByte(22)
+      ..write(obj.venuesVisited)
+      ..writeByte(23)
+      ..write(obj.achievements);
   }
 
   @override

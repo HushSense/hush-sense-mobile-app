@@ -27,6 +27,8 @@ class NoiseMeasurementAdapter extends TypeAdapter<NoiseMeasurement> {
       venueId: fields[7] as String?,
       userId: fields[8] as String?,
       metadata: (fields[9] as Map).cast<String, dynamic>(),
+      duration: fields[12] as int?,
+      locationAccuracy: fields[13] as double?,
     )
       ..createdAt = fields[10] as DateTime
       ..updatedAt = fields[11] as DateTime;
@@ -35,7 +37,7 @@ class NoiseMeasurementAdapter extends TypeAdapter<NoiseMeasurement> {
   @override
   void write(BinaryWriter writer, NoiseMeasurement obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -59,7 +61,11 @@ class NoiseMeasurementAdapter extends TypeAdapter<NoiseMeasurement> {
       ..writeByte(10)
       ..write(obj.createdAt)
       ..writeByte(11)
-      ..write(obj.updatedAt);
+      ..write(obj.updatedAt)
+      ..writeByte(12)
+      ..write(obj.duration)
+      ..writeByte(13)
+      ..write(obj.locationAccuracy);
   }
 
   @override
@@ -127,8 +133,10 @@ class MeasurementStatusAdapter extends TypeAdapter<MeasurementStatus> {
       case 0:
         return MeasurementStatus.pending;
       case 1:
-        return MeasurementStatus.uploaded;
+        return MeasurementStatus.completed;
       case 2:
+        return MeasurementStatus.uploaded;
+      case 3:
         return MeasurementStatus.failed;
       default:
         return MeasurementStatus.pending;
@@ -141,11 +149,14 @@ class MeasurementStatusAdapter extends TypeAdapter<MeasurementStatus> {
       case MeasurementStatus.pending:
         writer.writeByte(0);
         break;
-      case MeasurementStatus.uploaded:
+      case MeasurementStatus.completed:
         writer.writeByte(1);
         break;
-      case MeasurementStatus.failed:
+      case MeasurementStatus.uploaded:
         writer.writeByte(2);
+        break;
+      case MeasurementStatus.failed:
+        writer.writeByte(3);
         break;
     }
   }

@@ -17,8 +17,10 @@ enum MeasurementStatus {
   @HiveField(0)
   pending,
   @HiveField(1)
-  uploaded,
+  completed,
   @HiveField(2)
+  uploaded,
+  @HiveField(3)
   failed,
 }
 
@@ -76,6 +78,12 @@ class NoiseMeasurement extends HiveObject {
   @HiveField(11)
   late DateTime updatedAt;
 
+  @HiveField(12)
+  late int? duration; // Duration in seconds
+
+  @HiveField(13)
+  late double? locationAccuracy; // GPS accuracy in meters
+
   NoiseMeasurement({
     required this.id,
     required this.decibelLevel,
@@ -87,6 +95,8 @@ class NoiseMeasurement extends HiveObject {
     this.venueId,
     this.userId,
     this.metadata = const {},
+    this.duration,
+    this.locationAccuracy,
     DateTime? createdAtParam,
     DateTime? updatedAtParam,
   }) {
@@ -110,6 +120,8 @@ class NoiseMeasurement extends HiveObject {
       venueId: json['venueId'] as String?,
       userId: json['userId'] as String?,
       metadata: Map<String, dynamic>.from(json['metadata'] ?? {}),
+      duration: json['duration'] as int?,
+      locationAccuracy: (json['locationAccuracy'] as num?)?.toDouble(),
       createdAtParam: DateTime.parse(json['createdAt'] as String),
       updatedAtParam: DateTime.parse(json['updatedAt'] as String),
     );
@@ -127,6 +139,8 @@ class NoiseMeasurement extends HiveObject {
       'venueId': venueId,
       'userId': userId,
       'metadata': metadata,
+      'duration': duration,
+      'locationAccuracy': locationAccuracy,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
@@ -143,6 +157,8 @@ class NoiseMeasurement extends HiveObject {
     String? venueId,
     String? userId,
     Map<String, dynamic>? metadata,
+    int? duration,
+    double? locationAccuracy,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -157,6 +173,8 @@ class NoiseMeasurement extends HiveObject {
       venueId: venueId ?? this.venueId,
       userId: userId ?? this.userId,
       metadata: metadata ?? this.metadata,
+      duration: duration ?? this.duration,
+      locationAccuracy: locationAccuracy ?? this.locationAccuracy,
       createdAtParam: createdAt ?? this.createdAt,
       updatedAtParam: updatedAt ?? this.updatedAt,
     );

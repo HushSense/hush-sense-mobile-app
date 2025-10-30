@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../domain/models/user_profile.dart';
+import '../providers/app_providers.dart';
+import '../widgets/wallet_connect_button.dart';
 
 class RewardsScreen extends ConsumerStatefulWidget {
   const RewardsScreen({super.key});
@@ -78,7 +81,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
     super.dispose();
   }
 
-  Widget _buildAnimatedSection(int index, Widget child, {bool useScale = false}) {
+  Widget _buildAnimatedSection(int index, Widget child,
+      {bool useScale = false}) {
     if (useScale) {
       return ScaleTransition(
         scale: _scaleAnimation,
@@ -103,6 +107,9 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final walletState = ref.watch(walletStateProvider);
+    final userProfile = ref.watch(userProfileProvider);
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
@@ -115,8 +122,15 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               _buildAnimatedSection(0, _buildHeader(context)),
               const SizedBox(height: AppConstants.paddingL),
 
+              // Wallet Connection Section
+              if (!walletState.isConnected) ...[
+                _buildAnimatedSection(1, _buildWalletConnectionPrompt()),
+                const SizedBox(height: AppConstants.paddingL),
+              ],
+
               // Wallet Balance Card
-              _buildAnimatedSection(1, _buildWalletCard()),
+              _buildAnimatedSection(
+                  1, _buildWalletCard(walletState, userProfile)),
               const SizedBox(height: AppConstants.paddingL),
 
               // NFT Showcase
@@ -152,18 +166,70 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
       children: [
         Text(
           'Rewards',
-          style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+          style: theme.textTheme.headlineMedium
+              ?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(
           'Your contribution to the noise map is rewarded',
-          style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+          style: theme.textTheme.bodyLarge
+              ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
         ),
       ],
     );
   }
 
-  Widget _buildWalletCard() {
+  Widget _buildWalletConnectionPrompt() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppConstants.paddingL),
+      decoration: BoxDecoration(
+        color: AppConstants.primaryTeal.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(AppConstants.radiusL),
+        border: Border.all(
+          color: AppConstants.primaryTeal.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.account_balance_wallet,
+                color: AppConstants.primaryTeal,
+                size: 24,
+              ),
+              const SizedBox(width: AppConstants.paddingS),
+              const Text(
+                'Connect Hedera Wallet',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: AppConstants.textPrimary,
+                  fontFamily: 'Funnel Sans',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppConstants.paddingS),
+          const Text(
+            'Connect your Hedera wallet to claim HUSH token rewards for your noise measurements and participate in the decentralized network.',
+            style: TextStyle(
+              color: AppConstants.textSecondary,
+              fontFamily: 'Funnel Sans',
+            ),
+          ),
+          const SizedBox(height: AppConstants.paddingM),
+          const WalletConnectButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWalletCard(
+      WalletState walletState, AsyncValue<UserProfile?> userProfile) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     return Container(
@@ -174,8 +240,16 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isDark
-              ? [theme.colorScheme.primary, theme.colorScheme.secondary, theme.colorScheme.primary.withValues(alpha: 0.8)]
-              : [theme.colorScheme.primary, theme.colorScheme.secondary, theme.colorScheme.primary.withValues(alpha: 0.8)],
+              ? [
+                  theme.colorScheme.primary,
+                  theme.colorScheme.secondary,
+                  theme.colorScheme.primary.withValues(alpha: 0.8)
+                ]
+              : [
+                  theme.colorScheme.primary,
+                  theme.colorScheme.secondary,
+                  theme.colorScheme.primary.withValues(alpha: 0.8)
+                ],
           stops: const [0.0, 0.6, 1.0],
         ),
         borderRadius: BorderRadius.circular(24),
@@ -248,7 +322,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: AppConstants.accentGold.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(16),
@@ -268,7 +343,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: AppConstants.accentGold.withValues(alpha: 0.6),
+                                color: AppConstants.accentGold
+                                    .withValues(alpha: 0.6),
                                 blurRadius: 4,
                                 spreadRadius: 1,
                               ),
@@ -276,9 +352,11 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                           ),
                         ),
                         const SizedBox(width: 6),
-                        const Text(
-                          'Connected',
-                          style: TextStyle(
+                        Text(
+                          walletState.isConnected
+                              ? 'Connected'
+                              : 'Disconnected',
+                          style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -294,19 +372,38 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    '2,847',
-                    style: theme.textTheme.displayMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      height: 1.0,
+                  userProfile.when(
+                    data: (profile) => Text(
+                      profile?.hushTokenBalance?.toStringAsFixed(0) ?? '0',
+                      style: theme.textTheme.displayMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        height: 1.0,
+                      ),
+                    ),
+                    loading: () => Text(
+                      '...',
+                      style: theme.textTheme.displayMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        height: 1.0,
+                      ),
+                    ),
+                    error: (_, __) => Text(
+                      '0',
+                      style: theme.textTheme.displayMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        height: 1.0,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
                         color: AppConstants.accentGold.withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(8),
@@ -331,7 +428,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               ),
               const SizedBox(height: AppConstants.paddingM),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: theme.cardColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -376,7 +474,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            _accountId,
+                            walletState.accountId ?? 'Not connected',
                             style: theme.textTheme.titleMedium?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
@@ -387,7 +485,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.black.withValues(alpha: 0.18),
                         borderRadius: BorderRadius.circular(10),
@@ -403,6 +502,35 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                   ],
                 ),
               ),
+              if (walletState.isConnected) ...[
+                const SizedBox(height: AppConstants.paddingM),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _claimRewards(userProfile.value),
+                    icon: const Icon(Icons.redeem, size: 20),
+                    label: const Text(
+                      'Claim Rewards',
+                      style: TextStyle(
+                        fontFamily: 'Funnel Sans',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppConstants.primaryTeal,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppConstants.paddingL,
+                        vertical: AppConstants.paddingM,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(AppConstants.radiusM),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ],
@@ -441,7 +569,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               ),
               const SizedBox(width: 12),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
@@ -464,7 +593,6 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               child: Image.asset(
                 _nftImagePath,
                 fit: BoxFit.cover,
-                
               ),
             ),
           ),
@@ -496,7 +624,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
       children: [
         Text(
           'Earning Breakdown',
-          style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+          style:
+              theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: AppConstants.paddingM),
         Row(
@@ -550,7 +679,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
     );
   }
 
-  Widget _buildEarningCard(String title, String value, String subtitle, IconData icon, Color color) {
+  Widget _buildEarningCard(
+      String title, String value, String subtitle, IconData icon, Color color) {
     final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(AppConstants.paddingM),
@@ -686,12 +816,12 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
       width: 100,
       padding: const EdgeInsets.all(AppConstants.paddingM),
       decoration: BoxDecoration(
-        color: isEarned 
+        color: isEarned
             ? AppConstants.accentGold.withValues(alpha: 0.1)
             : AppConstants.softGray.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppConstants.radiusM),
         border: Border.all(
-          color: isEarned 
+          color: isEarned
               ? AppConstants.accentGold.withValues(alpha: 0.3)
               : AppConstants.softGray.withValues(alpha: 0.2),
         ),
@@ -712,8 +842,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: isEarned 
-                  ? AppConstants.textPrimary 
+              color: isEarned
+                  ? AppConstants.textPrimary
                   : AppConstants.textTertiary,
               fontFamily: 'Funnel Sans',
             ),
@@ -775,7 +905,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               const Divider(height: 24),
               _buildLeaderboardItem('🥉', 'CityListener', '12,956', '3'),
               const Divider(height: 24),
-              _buildLeaderboardItem('🎤', 'You (Sound Scout)', '2,847', '47', isCurrentUser: true),
+              _buildLeaderboardItem('🎤', 'You (Sound Scout)', '2,847', '47',
+                  isCurrentUser: true),
             ],
           ),
         ),
@@ -783,7 +914,9 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
     );
   }
 
-  Widget _buildLeaderboardItem(String emoji, String name, String tokens, String rank, {bool isCurrentUser = false}) {
+  Widget _buildLeaderboardItem(
+      String emoji, String name, String tokens, String rank,
+      {bool isCurrentUser = false}) {
     return Row(
       children: [
         Text(
@@ -800,7 +933,9 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: isCurrentUser ? FontWeight.w600 : FontWeight.w500,
-                  color: isCurrentUser ? AppConstants.primaryTeal : AppConstants.textPrimary,
+                  color: isCurrentUser
+                      ? AppConstants.primaryTeal
+                      : AppConstants.textPrimary,
                   fontFamily: 'Funnel Sans',
                 ),
               ),
@@ -820,7 +955,9 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: isCurrentUser ? AppConstants.primaryTeal : AppConstants.textSecondary,
+            color: isCurrentUser
+                ? AppConstants.primaryTeal
+                : AppConstants.textSecondary,
             fontFamily: 'Funnel Sans',
           ),
         ),
@@ -869,7 +1006,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
     );
   }
 
-  Widget _buildRedemptionCard(String title, String cost, String description, IconData icon, Color color) {
+  Widget _buildRedemptionCard(String title, String cost, String description,
+      IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(AppConstants.paddingM),
       decoration: BoxDecoration(
@@ -939,7 +1077,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                   // TODO: Handle redemption
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -960,5 +1099,148 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
         ],
       ),
     );
+  }
+
+  Future<void> _claimRewards(UserProfile? userProfile) async {
+    if (userProfile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('User profile not found'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final walletState = ref.read(walletStateProvider);
+    if (!walletState.isConnected) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please connect your Hedera wallet first'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    final claimableAmount = userProfile.hushTokenBalance ?? 0.0;
+    if (claimableAmount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No rewards available to claim'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    // Show claiming dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Claiming Rewards',
+          style: TextStyle(fontFamily: 'Funnel Sans'),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(
+              'Claiming ${claimableAmount.toStringAsFixed(2)} HUSH tokens...',
+              style: const TextStyle(fontFamily: 'Funnel Sans'),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Please approve the transaction in your wallet.',
+              style: TextStyle(
+                fontFamily: 'Funnel Sans',
+                fontSize: 12,
+                color: AppConstants.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    try {
+      final rewardService = ref.read(rewardServiceProvider);
+      final claimResult = await rewardService.claimRewards(
+        userProfile: userProfile,
+      );
+
+      if (mounted) {
+        Navigator.of(context).pop(); // Close loading dialog
+
+        if (claimResult.success) {
+          // Refresh user profile data
+          ref.invalidate(userProfileProvider);
+          ref.invalidate(walletBalanceProvider);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Rewards claimed successfully!',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          '${claimResult.amount.toStringAsFixed(2)} HUSH tokens sent to your wallet',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: AppConstants.primaryTeal,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  'Failed to claim rewards: ${claimResult.error ?? 'Unknown error'}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context).pop(); // Close loading dialog
+
+        String errorMessage = 'Failed to claim rewards';
+        if (e.toString().contains('UserRejectedTransactionException')) {
+          errorMessage = 'Transaction was cancelled by user';
+        } else if (e.toString().contains('NotConnectedException')) {
+          errorMessage = 'Wallet connection lost. Please reconnect.';
+        } else if (e.toString().contains('NetworkException')) {
+          errorMessage = 'Network error. Please check your connection.';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

@@ -7,8 +7,12 @@ import 'dart:async';
 import '../../domain/models/noise_measurement.dart';
 import '../../domain/models/user_profile.dart';
 import '../../domain/models/venue.dart';
+// TODO: Uncomment when Hive code is generated: import '../../domain/models/reward_transaction.dart';
 import '../../core/services/location_service.dart';
 import '../../core/services/audio_service.dart';
+import '../../core/services/wallet_service.dart';
+import '../../core/services/reward_service.dart';
+import '../../core/services/hedera_wallet_types.dart';
 
 // Hive Box Providers
 final noiseMeasurementsBoxProvider = Provider<Box<NoiseMeasurement>>((ref) {
@@ -23,9 +27,24 @@ final venuesBoxProvider = Provider<Box<Venue>>((ref) {
   return Hive.box<Venue>('venues');
 });
 
+// TODO: Uncomment when Hive code is generated:
+// final rewardTransactionsBoxProvider = Provider<Box<RewardTransaction>>((ref) {
+//   return Hive.box<RewardTransaction>('reward_transactions');
+// });
+
 // Firebase Auth Provider
 final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
   return FirebaseAuth.instance;
+});
+
+// Wallet Service Provider
+final walletServiceProvider = Provider<WalletService>((ref) {
+  return WalletService();
+});
+
+// Reward Service Provider
+final rewardServiceProvider = Provider<RewardService>((ref) {
+  return RewardService();
 });
 
 // Current User Provider
@@ -400,5 +419,239 @@ class AppStateNotifier extends StateNotifier<AppState> {
     final newSettings = Map<String, dynamic>.from(state.settings);
     newSettings[key] = value;
     state = state.copyWith(settings: newSettings);
+  }
+}
+
+// Wallet Connection State Provider
+final walletConnectionProvider = StreamProvider<WalletConnectionStatus>((ref) {
+  final walletService = ref.watch(walletServiceProvider);
+  return walletService.connectionStream.map((connectionState) {
+    return WalletConnectionStatus(
+      isConnected: connectionState.isConnected,
+      accountId: connectionState.accountId,
+      walletName: connectionState.walletName,
+      network: connectionState.network,
+    );
+  });
+});
+
+// Wallet Balance Provider
+final walletBalanceProvider = FutureProvider<double?>((ref) async {
+  final walletService = ref.watch(walletServiceProvider);
+
+  if (!walletService.isConnected()) {
+    return null;
+  }
+
+  try {
+    return await walletService.getBalance();
+  } catch (e) {
+    // Return null if balance fetch fails
+    return null;
+  }
+});
+
+// Available Wallets Provider
+final availableWalletsProvider =
+    FutureProvider<List<AvailableWallet>>((ref) async {
+  final walletService = ref.watch(walletServiceProvider);
+  try {
+    return await walletService.getAvailableWallets();
+  } catch (e) {
+    return [];
+  }
+});
+
+// Wallet State Notifier
+final walletStateProvider =
+    StateNotifierProvider<WalletStateNotifier, WalletState>((ref) {
+  return WalletStateNotifier(ref);
+});
+
+class WalletStateNotifier extends StateNotifier<WalletState> {
+  final Ref _ref;
+  StreamSubscription<WalletConnectionStatus>? _connectionSubscription;
+
+  WalletStateNotifier(this._ref) : super(const WalletState()) {
+    _initializeWalletState();
+  }
+
+  void _initializeWalletState() {
+    final walletService = _ref.read(walletServiceProvider);
+    final connectionStatus = walletService.getConnectionStatus();
+
+    state = state.copyWith(
+      isConnected: connectionStatus.isConnected,
+      accountId: connectionStatus.accountId,
+      walletName: connectionStatus.walletName,
+      network: connectionStatus.network,
+    );
+
+    // Listen to connection changes
+    _connectionSubscription = _ref.read(walletConnectionProvider.stream).listen(
+      (connectionStatus) {
+        state = state.copyWith(
+          isConnected: connectionStatus.isConnected,
+          accountId: connectionStatus.accountId,
+          walletName: connectionStatus.walletName,
+          network: connectionStatus.network,
+          isConnecting: false,
+          error: null,
+        );
+      },
+      onError: (error) {
+        state = state.copyWith(
+          isConnecting: false,
+          error: error.toString(),
+        );
+      },
+    );
+  }
+
+  Future<void> connectWallet({String? preferredWallet}) async {
+    state = state.copyWith(isConnecting: true, error: null);
+
+    try {
+      final walletService = _ref.read(walletServiceProvider);
+      final accountInfo =
+          await walletService.connect(preferredWallet: preferredWallet);
+
+      if (accountInfo != null) {
+        // Update user profile with wallet information
+        await _updateUserProfileWallet(accountInfo.accountId);
+
+        state = state.copyWith(
+          isConnected: true,
+          isConnecting: false,
+          accountId: accountInfo.accountId,
+          walletName: accountInfo.walletName,
+          network: accountInfo.network,
+          error: null,
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(
+        isConnecting: false,
+        error: e.toString(),
+      );
+      rethrow;
+    }
+  }
+
+  Future<void> disconnectWallet() async {
+    try {
+      final walletService = _ref.read(walletServiceProvider);
+      await walletService.disconnect();
+
+      // Clear wallet information from user profile
+      await _updateUserProfileWallet(null);
+
+      state = state.copyWith(
+        isConnected: false,
+        accountId: null,
+        walletName: null,
+        network: null,
+        error: null,
+      );
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> refreshBalance() async {
+    if (!state.isConnected) return;
+
+    try {
+      final walletService = _ref.read(walletServiceProvider);
+      final balance = await walletService.getBalance();
+
+      // Update user profile with new balance
+      final user = await _ref.read(currentUserProvider.future);
+      if (user != null) {
+        final userProfilesBox = _ref.read(userProfilesBoxProvider);
+        final userProfile = userProfilesBox.values
+            .where((profile) => profile.id == user.uid)
+            .firstOrNull;
+
+        if (userProfile != null) {
+          userProfile.hbarBalance = balance;
+          userProfile.lastWalletSync = DateTime.now();
+          await userProfile.save();
+        }
+      }
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+    }
+  }
+
+  Future<void> _updateUserProfileWallet(String? accountId) async {
+    try {
+      final user = await _ref.read(currentUserProvider.future);
+      if (user != null) {
+        final userProfilesBox = _ref.read(userProfilesBoxProvider);
+        final userProfile = userProfilesBox.values
+            .where((profile) => profile.id == user.uid)
+            .firstOrNull;
+
+        if (userProfile != null) {
+          userProfile.walletAccountId = accountId;
+          userProfile.lastWalletSync =
+              accountId != null ? DateTime.now() : null;
+          await userProfile.save();
+        }
+      }
+    } catch (e) {
+      // Log error but don't throw - wallet connection should still work
+      debugPrint('Failed to update user profile with wallet info: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _connectionSubscription?.cancel();
+    super.dispose();
+  }
+}
+
+// Wallet State Data Class
+class WalletState {
+  final bool isConnected;
+  final bool isConnecting;
+  final String? accountId;
+  final String? walletName;
+  final String? network;
+  final String? error;
+
+  const WalletState({
+    this.isConnected = false,
+    this.isConnecting = false,
+    this.accountId,
+    this.walletName,
+    this.network,
+    this.error,
+  });
+
+  WalletState copyWith({
+    bool? isConnected,
+    bool? isConnecting,
+    String? accountId,
+    String? walletName,
+    String? network,
+    String? error,
+  }) {
+    return WalletState(
+      isConnected: isConnected ?? this.isConnected,
+      isConnecting: isConnecting ?? this.isConnecting,
+      accountId: accountId ?? this.accountId,
+      walletName: walletName ?? this.walletName,
+      network: network ?? this.network,
+      error: error ?? this.error,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'WalletState(isConnected: $isConnected, isConnecting: $isConnecting, accountId: $accountId, walletName: $walletName, network: $network, error: $error)';
   }
 }
