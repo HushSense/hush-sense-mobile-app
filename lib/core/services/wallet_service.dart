@@ -20,6 +20,8 @@ class WalletService {
   Future<AccountInfo?> connect({String? preferredWallet}) async {
     try {
       debugPrint('🔗 Attempting to connect to Hedera wallet...');
+      await HederaWalletConnect.ensureInitialized();
+      debugPrint('🛠️ Hedera WalletConnect ensured initialized');
       final accountInfo = await HederaWalletConnect.connect(
         preferredWallet: preferredWallet,
       );
